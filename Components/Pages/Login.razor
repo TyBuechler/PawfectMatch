@@ -1,6 +1,6 @@
 ﻿@layout LoginLayout
 @using PawfectMatch.Components.Layout
-@page "/"
+@page "/Login"
 @inject NavigationManager Navigation
 
 
@@ -21,7 +21,7 @@
     <input type="password" id="password" @bind="Password" />
 
     <!-- Login button -->
-    <button @onclick="LoginUser">Login</button>
+    <button type="button" @onclick="LoginUser">Login</button>
 </form>
 
 <p>
@@ -43,9 +43,7 @@
     // Login method
     private void LoginUser()
     {
-        Console.WriteLine("Navigating to /Home");
-        Navigation.NavigateTo("/Home");
-        /*// Check if the username and password are correct
+        // Check if the username and password are correct
         if (Users.ContainsKey(Username) && Users[Username] == Password)
         {
             // Navigate to the Home page
@@ -55,6 +53,5 @@
         {
             LoginMessage = "Invalid username or password.";
         }
-        */
     }
 }
