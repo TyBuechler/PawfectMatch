@@ -1,0 +1,57 @@
+﻿@layout LoginLayout
+@using PawfectMatch.Components.Layout
+@page "/Login"
+@inject NavigationManager Navigation
+
+
+<h3>Login</h3>
+
+@if (!string.IsNullOrEmpty(LoginMessage))
+{
+    <div>@LoginMessage</div>
+}
+
+<form>
+    <!-- Input for username -->
+    <label for="username">Username:</label>
+    <input type="text" id="username" @bind="Username" />
+
+    <!-- Input for password -->
+    <label for="password">Password:</label>
+    <input type="password" id="password" @bind="Password" />
+
+    <!-- Login button -->
+    <button type="button" @onclick="LoginUser">Login</button>
+</form>
+
+<p>
+    <!-- Link to sign-up page -->
+    Don't have an account? <a href="/signup">Sign up here</a>.
+</p>
+
+@code {
+    private string Username = string.Empty;
+    private string Password = string.Empty;
+    private string LoginMessage = string.Empty;
+
+    // Simulated user storage (replace with a database in a real app)
+    private Dictionary<string, string> Users = new Dictionary<string, string>
+    {
+        { "admin", "admin" } // Predefined user for testing
+    };
+
+    // Login method
+    private void LoginUser()
+    {
+        // Check if the username and password are correct
+        if (Users.ContainsKey(Username) && Users[Username] == Password)
+        {
+            // Navigate to the Home page
+            Navigation.NavigateTo("/Home");
+        }
+        else
+        {
+            LoginMessage = "Invalid username or password.";
+        }
+    }
+}
