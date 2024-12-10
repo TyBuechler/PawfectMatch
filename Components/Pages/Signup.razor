@@ -1,6 +1,7 @@
 ﻿@layout LoginLayout
 @using PawfectMatch.Components.Layout
 @page "/signup"
+@inject NavigationManager Navigation
 
 <h3>Sign Up</h3>
 
@@ -38,8 +39,9 @@
     // Sign-up method
     private void SignUpUser()
     {
+        Navigation.NavigateTo("/Home");
         // Check if the username is already taken
-        if (Users.ContainsKey(NewUsername))
+        /*if (Users.ContainsKey(NewUsername))
         {
             SignUpMessage = "Username already exists.";
         }
@@ -48,6 +50,6 @@
             // Add the new user
             Users[NewUsername] = NewPassword;
             SignUpMessage = "Sign-up successful! You can now log in.";
-        }
+        }*/
     }
 }

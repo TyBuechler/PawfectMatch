@@ -1,0 +1,26 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(Program).Assembly"
+            Found="@((routeData) => RouteView(routeData))"
+            NotFound="@((routeData) => NotFound())">
+    </Router>
+</CascadingAuthenticationState>
+
+@code {
+    private RenderFragment RouteView(RouteData routeData) =>
+        builder =>
+        {
+            builder.AddContent(0,
+                Activator.CreateInstance(routeData.PageType));
+        };
+
+    private RenderFragment NotFound() =>
+        builder =>
+        {
+            builder.AddContent(0, "Page not found.");
+        };
+}
