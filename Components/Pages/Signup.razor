@@ -1,54 +1,62 @@
-﻿@layout LoginLayout
+@layout LoginLayout
 @using PawfectMatch.Components.Layout
 @page "/signup"
 @rendermode InteractiveServer
 
+﻿@page "/signup"
+@inject NavigationManager Navigation
+
 <h3>Sign Up</h3>
 
-@if (!string.IsNullOrEmpty(SignUpMessage))
-{
-    <div>@SignUpMessage</div>
-}
-
-<form>
-    <!-- Input for username -->
-    <label for="new-username">Username:</label>
-    <input type="text" id="new-username" @bind="NewUsername" />
-
-    <!-- Input for password -->
-    <label for="new-password">Password:</label>
-    <input type="password" id="new-password" @bind="NewPassword" />
-
-    <!-- Sign up button -->
-    <button @onclick="SignUpUser">Sign Up</button>
-</form>
+<div class="form-group">
+    <label for="username">Username</label>
+    <input @bind="newUsername" id="username" class="form-control" />
+</div>
+<div class="form-group">
+    <label for="password">Password</label>
+    <input @bind="newPassword" id="password" type="password" class="form-control" />
+</div>
+<div class="form-group">
+    <label for="confirmPassword">Confirm Password</label>
+    <input @bind="confirmPassword" id="confirmPassword" type="password" class="form-control" />
+</div>
+<button class="btn btn-primary" @onclick="SignupUser">Sign Up</button>
+<p>@message</p>
 
 <p>
-    <!-- Link to login page -->
-    Already have an account? <a href="/">Login here</a>.
+    Already have an account?
+    <a href="/login" @onclick="NavigateToLogin">Log in here</a>
 </p>
 
 @code {
-    private string NewUsername = string.Empty;
-    private string NewPassword = string.Empty;
-    private string SignUpMessage = string.Empty;
+    private string newUsername;
+    private string newPassword;
+    private string confirmPassword;
+    private string message;
 
-    // Simulated user storage (shared with Login page)
-    private Dictionary<string, string> Users = new Dictionary<string, string>();
-
-    // Sign-up method
-    private void SignUpUser()
+    private async Task SignupUser()
     {
-        // Check if the username is already taken
-        if (Users.ContainsKey(NewUsername))
+
+        if (string.IsNullOrWhiteSpace(newUsername) || string.IsNullOrWhiteSpace(newPassword))
+
         {
-            SignUpMessage = "Username already exists.";
+            message = "Username and password cannot be empty.";
+            return;
         }
-        else
+
+        if (newPassword != confirmPassword)
         {
-            // Add the new user
-            Users[NewUsername] = NewPassword;
-            SignUpMessage = "Sign-up successful! You can now log in.";
+            message = "Passwords do not match.";
+            return;
         }
+
+        // Replace with actual user creation logic
+        message = "Account created successfully!";
+        // Redirect or handle account creation
+    }
+
+    private void NavigateToLogin()
+    {
+        Navigation.NavigateTo("/login");
     }
 }

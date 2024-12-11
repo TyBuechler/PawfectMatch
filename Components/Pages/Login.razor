@@ -1,57 +1,69 @@
-﻿@layout LoginLayout
+@layout LoginLayout
 @using PawfectMatch.Components.Layout
 @page "/Login"
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-<h3>Login</h3>
 
-@if (!string.IsNullOrEmpty(LoginMessage))
-{
-    <div>@LoginMessage</div>
-}
 
-<form>
-    <!-- Input for username -->
-    <label for="username">Username:</label>
-    <input type="text" id="username" @bind="Username" />
+<EditForm Model="@user" OnValidSubmit="@ValidateUser">
+    <div>
+        <h3 style="font-weight:bold; color:purple">Book Stores Login</h3>
+    </div>
 
-    <!-- Input for password -->
-    <label for="password">Password:</label>
-    <input type="password" id="password" @bind="Password" />
+    <div class="row">
+        <div class="col-12">
+            <input class="form-control" @bind="user.EmailAddress" placeholder="email address" />
+        </div>
+    </div>
 
-    <!-- Login button -->
-    <button type="button" @onclick="LoginUser">Login</button>
-</form>
+
+<div class="form-group">
+    <label for="username">Username</label>
+    <input @bind="username" id="username" class="form-control" />
+</div>
+<div class="form-group">
+    <label for="password">Password</label>
+    <input @bind="password" id="password" type="password" class="form-control" />
+</div>
+<button class="btn btn-primary" @onclick="LoginUser">Login</button>
+<p>@message</p>
 
 <p>
-    <!-- Link to sign-up page -->
-    Don't have an account? <a href="/signup">Sign up here</a>.
+    Don't have an account?
+    <a href="/signup" @onclick="NavigateToSignup">Sign up here</a>
 </p>
 
 @code {
-    private string Username = string.Empty;
-    private string Password = string.Empty;
-    private string LoginMessage = string.Empty;
+    [Inject]
+    private NavigationManager navigationManager{ get; set; }
 
-    // Simulated user storage (replace with a database in a real app)
-    private Dictionary<string, string> Users = new Dictionary<string, string>
-    {
-        { "admin", "admin" } // Predefined user for testing
-    };
+    private string username;
+    private string password;
+    private string message;
 
-    // Login method
-    private void LoginUser()
+    private async Task LoginUser()
     {
-        // Check if the username and password are correct
-        if (Users.ContainsKey(Username) && Users[Username] == Password)
+        // Replace with real authentication logic
+        if (username == "admin" && password == "admin")
         {
-            // Navigate to the Home page
-            Navigation.NavigateTo("/Home");
+            message = "Login successful!";
+            // Redirect to the home page
+            NavigateToHome();
         }
         else
         {
-            LoginMessage = "Invalid username or password.";
+            message = "Invalid username or password.";
         }
+    }
+
+    void NavigateToSignup()
+    {
+        this.navigationManager.NavigateTo("/signup");
+    }
+
+    void NavigateToHome()
+    {
+        this.navigationManager.NavigateTo("/Home");
     }
 }
