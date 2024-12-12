@@ -1,6 +1,9 @@
+@layout LoginLayout
+@using PawfectMatch.Components.Layout
+@page "/Login"
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
-﻿@page "/login"
-@using Microsoft.AspNetCore.Components.Authorization
 
 
 <EditForm Model="@user" OnValidSubmit="@ValidateUser">
