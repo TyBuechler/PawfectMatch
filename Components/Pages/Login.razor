@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
 
 
 <h3>Login</h3>
@@ -50,6 +51,6 @@
 
     void NavigateToHome()
     {
-        this.navigationManager.NavigateTo("/Home");
+        this.navigationManager.NavigateTo("/");
     }
 }
