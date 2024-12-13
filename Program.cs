@@ -6,6 +6,7 @@ using PawfectMatch.Components.Data;
 using PawfectMatch;
 using Microsoft.AspNetCore.Authentication.Cookies; // Add this for cookie authentication
 using Microsoft.AspNetCore.Components;
+using PawfectMatch.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
