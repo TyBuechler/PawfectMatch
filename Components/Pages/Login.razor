@@ -1,11 +1,15 @@
+
 ﻿@layout LoginLayout
+
 @using PawfectMatch.Components.Layout
 @page "/Login"
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
 
+
 <h3>Login</h3>
+
 
 @if (!string.IsNullOrEmpty(LoginMessage))
 {
@@ -54,5 +58,6 @@
         {
             LoginMessage = "Invalid username or password.";
         }
+
     }
 }
