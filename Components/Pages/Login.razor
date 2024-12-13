@@ -1,75 +1,57 @@
-﻿@page "/Login"
-@using PawfectMatch.Components.Data
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject NavigationManager NavigationManager
-@inject IJSRuntime jsRunTime
+﻿@layout LoginLayout
+@using PawfectMatch.Components.Layout
+@page "/"
+@inject NavigationManager Navigation
 
-<EditForm Model="@user" OnValidSubmit="@ValidateUser">
-    <div>
-        <h3 style="font-weight:bold; color:purple">Book Stores Login</h3>
-    </div>
 
-    <div class="row">
-        <div class="col-12">
-            <input class="form-control" @bind="user.EmailAddress" placeholder="email address" />
-        </div>
-    </div>
+<h3>Login</h3>
 
-    <div class="row">
-        <div class="col-12">
-            <input type="password" class="form-control" @bind="user.Password" placeholder="password" />
-        </div>
-    </div>
+@if (!string.IsNullOrEmpty(LoginMessage))
+{
+    <div>@LoginMessage</div>
+}
 
-    <div class="row">
-        <div class="col-6">
-            <input type="submit" class="btn btn-primary form-control" value="Login" />
-        </div>
-        <div class="col-6">
-            <a href="/signup" class="form-control text-center">Sign up</a>
-        </div>
-    </div>
+<form>
+    <!-- Input for username -->
+    <label for="username">Username:</label>
+    <input type="text" id="username" @bind="Username" />
 
-    <div class="row">
-        <div class="col-12" style="text-align:left; font-weight:bold">
-            <span>@LoginMesssage</span>
-        </div>
-    </div>
-</EditForm>
+    <!-- Input for password -->
+    <label for="password">Password:</label>
+    <input type="password" id="password" @bind="Password" />
+
+    <!-- Login button -->
+    <button type="button" @onclick="LoginUser">Login</button>
+</form>
+
+<p>
+    <!-- Link to sign-up page -->
+    Don't have an account? <a href="/signup">Sign up here</a>.
+</p>
 
 @code {
-    private User user = new User();
-    public string LoginMesssage { get; set; }
-    ClaimsPrincipal claimsPrincipal;
+    private string Username = string.Empty;
+    private string Password = string.Empty;
+    private string LoginMessage = string.Empty;
 
-    [CascadingParameter]
-    private Task<AuthenticationState> authenticationStateTask { get; set; }
-
-    // Simple validation method - no async method required
-    private void ValidateUser()
+    // Simulated user storage (replace with a database in a real app)
+    private Dictionary<string, string> Users = new Dictionary<string, string>
     {
-        // Example of hardcoded credentials
-        if (user.EmailAddress == "philip.cramer@gmail.com" && user.Password == "philip.cramer")
+        { "admin", "admin" } // Predefined user for testing
+    };
+
+    // Login method
+    private void LoginUser()
+    {
+        // Check if the username and password are correct
+        if (Users.ContainsKey(Username) && Users[Username] == Password)
         {
-            // In a real scenario, you would authenticate and set the claims here
-            // For this example, we'll redirect directly
-            NavigationManager.NavigateTo("/index");
+            // Navigate to the Home page
+            Navigation.NavigateTo("/Home");
         }
         else
         {
-            LoginMesssage = "Invalid credentials. Please try again.";
-        }
-    }
-
-    protected async override Task OnInitializedAsync()
-    {
-        claimsPrincipal = (await authenticationStateTask).User;
-
-        if (claimsPrincipal.Identity.IsAuthenticated)
-        {
-            NavigationManager.NavigateTo("/index");
+            LoginMessage = "Invalid username or password.";
         }
     }
 }
