@@ -1,7 +1,8 @@
 ﻿@layout LoginLayout
 @using PawfectMatch.Components.Layout
-@page "/"
+@page "/Login"
 @inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 
 <h3>Login</h3>
@@ -47,7 +48,7 @@
         if (Users.ContainsKey(Username) && Users[Username] == Password)
         {
             // Navigate to the Home page
-            Navigation.NavigateTo("/Home");
+            Navigation.NavigateTo("/");
         }
         else
         {
