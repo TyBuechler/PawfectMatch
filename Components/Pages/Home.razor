@@ -1,4 +1,27 @@
 ﻿@page "/"
 
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 <h3>Welcome to the Home Page!</h3>
-<p>You are successfully logged in.</p>
+
+@if (isAuthenticated)
+{
+    <p>You are successfully logged in.</p>
+}
+else
+{
+    <p> </p>
+}
+
+@code {
+    private bool isAuthenticated;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        isAuthenticated = user.Identity.IsAuthenticated;
+    }
+}
