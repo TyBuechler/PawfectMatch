@@ -14,6 +14,7 @@ namespace PawfectMatch.Data
         {
         }
 
+        public DbSet<User> Users { get; set; } // Example table
         public DbSet<PawfectMatch.Components.Pages.Models.User> User { get; set; } = default!;
     }
 }
