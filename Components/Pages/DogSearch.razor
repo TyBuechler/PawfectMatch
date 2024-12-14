@@ -5,31 +5,68 @@
 @using Microsoft.AspNetCore.Components
 @inject DogService DogService
 @rendermode InteractiveServer
+
 <PageTitle>Dog Search</PageTitle>
 
 <h1>Dogs Available for Adoption</h1>
+
+<!-- Dropdown for Breed Filter -->
+<div>
+    <label for="breedFilter">Filter by Breed:</label>
+    <select id="breedFilter" @onchange="FilterDogs">
+        <option value="">All Breeds</option>
+        @foreach (var breed in breeds)
+        {
+            <option value="@breed">@breed</option>
+        }
+    </select>
+</div>
+
+<!-- Dogs List -->
 <ul>
-    @foreach (var dog in dogs)
+    @foreach (var dog in filteredDogs)
     {
-        <li>
-            <img src="images/@dog.ImageUrl" alt="@dog.Name" style="width:200px;height:200px;" />
-            <p>Name: @dog.Name</p>
-            <p>Breed: @dog.Breed</p>
-            <p>Age: @dog.Age</p>
-            <button @onclick="() => NavigateToDetails(dog.Id)">View Dog</button>
-        </li>
+        if (dog.IsAvailable)
+        {
+            <li>
+                <img src="images/@dog.ImageUrl" alt="@dog.Name" style="width:200px;height:200px;" />
+                <p>Name: @dog.Name</p>
+                <p>Breed: @dog.Breed</p>
+                <p>Age: @dog.Age</p>
+                <button @onclick="() => NavigateToDetails(dog.Id)">View Dog</button>
+            </li>
+        }
     }
 </ul>
+
 @code {
     private List<Dog> dogs;
+    private List<Dog> filteredDogs;
+    private List<string> breeds;
+    private string selectedBreed = "";
+
     protected override async Task OnInitializedAsync()
     {
         dogs = await DogService.GetDogsAsync();
+        filteredDogs = dogs;
+        breeds = dogs.Select(d => d.Breed).Distinct().ToList();
+    }
+
+    private void FilterDogs(ChangeEventArgs e)
+    {
+        selectedBreed = e.Value.ToString();
+        if (string.IsNullOrEmpty(selectedBreed))
+        {
+            filteredDogs = dogs;
+        }
+        else
+        {
+            filteredDogs = dogs.Where(d => d.Breed == selectedBreed).ToList();
+        }
     }
 
     private void NavigateToDetails(int id)
-    { // Log to console to verify click event is firing
+    {
         Navigation.NavigateTo($"/dogdetails/{id}");
     }
-
 }
