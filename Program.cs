@@ -1,8 +1,8 @@
 ﻿using PawfectMatch.Components;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContextFactory<PawfectMatchContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("PawfectMatchContext") ?? throw new InvalidOperationException("Connection string 'PawfectMatchContext' not found.")));
+//builder.Services.AddDbContextFactory<PawfectMatchContext>(options =>
+  //  options.UseSqlServer(builder.Configuration.GetConnectionString("PawfectMatchContext") ?? throw new InvalidOperationException("Connection string 'PawfectMatchContext' not found.")));
 
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
