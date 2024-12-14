@@ -1,6 +1,7 @@
 ﻿using PawfectMatch.Components;
 using PawfectMatch.Data; // Ensure you include the namespace for PawfectMatchContext
 using Microsoft.EntityFrameworkCore;
+using PawfectMatch.Components.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,9 @@ builder.Services.AddDbContextFactory<PawfectMatchContext>(options =>
 // Add other services
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// Register DogService
+builder.Services.AddScoped<DogService>();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
