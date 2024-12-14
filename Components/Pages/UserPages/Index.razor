@@ -6,16 +6,19 @@
 @implements IAsyncDisposable
 @inject IDbContextFactory<PawfectMatch.Data.PawfectMatchContext> DbFactory
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Pawfect Match Dog Database</PageTitle>
 
-<h1>Index</h1>
+<h1>Pawfect Match Dog Database</h1>
 
 <p>
     <a href="users/create">Create New</a>
 </p>
 
 <QuickGrid Class="table" Items="context.User">
-    <PropertyColumn Property="user => user.password" />
+    <TemplateColumn Title="User Password">
+        @context.password
+    </TemplateColumn>
+
 
     <TemplateColumn Context="user">
         <a href="@($"users/edit?username={user.username}")">Edit</a> |
