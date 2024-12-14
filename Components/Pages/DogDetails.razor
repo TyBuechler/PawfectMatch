@@ -1,0 +1,23 @@
+﻿@page "/dogdetails/{Id:int}"
+@using PawfectMatch.Components.Pages.Models
+@using PawfectMatch.Components.Services
+@inject DogService DogService
+
+<h1>@selectedDog.Name's Details</h1>
+<img src="images/@selectedDog.ImageUrl" alt="@selectedDog.Name" style="width:200px;height:200px;" />
+<p>Name: @selectedDog.Name</p>
+<p>Breed: @selectedDog.Breed</p>
+<p>Age: @selectedDog.Age</p>
+<p>More details about the dog...</p>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Dog selectedDog;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        selectedDog = await DogService.GetDogByIdAsync(Id);
+    }
+}

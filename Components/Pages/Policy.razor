@@ -3,17 +3,47 @@
 
 <PageTitle>Policy</PageTitle>
 
-<h1>Policy</h1>
+<div class="policy-container">
 
-<p role="status">Current count: @currentCount</p>
+    <h1>Adoption Policy</h1>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <div class="policy-item">
+        <h2>Welcome to Pawfect Adoption</h2>
+        <p>
+            Thank you for considering adopting a dog from Pawfect! Our mission is to connect wonderful dogs with loving homes. Below you’ll find our adoption policy, designed to ensure the safety and well-being of our dogs while facilitating a smooth adoption process.
+        </p>
+    </div>
 
-@code {
-    private int currentCount = 0;
+    <div class="policy-item">
+        <h2>Eligibility</h2>
+        <p>
+            To adopt a dog, you must meet the following requirements:<br />
+            - You must be at least 18 years old.<br />
+            - You must have a stable and safe living environment.<br />
+            - All current pets must be spayed/neutered and up-to-date on vaccinations.<br />
+            - Adoption fees are required and vary based on the dog’s age and breed.
+        </p>
+    </div>
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-}
+    <div class="policy-item">
+        <h2>Adoption Process</h2>
+        <p>
+            Our adoption process involves the following steps:<br />
+            1. Complete an adoption application.<br />
+            2. Meet with an adoption counselor for an interview.<br />
+            3. Complete a home visit if applicable.<br />
+            4. Pay the adoption fee and finalize the adoption.
+        </p>
+    </div>
+
+    <div class="policy-item">
+        <h2>Our Commitment</h2>
+        <p>
+            We are committed to providing a safe and loving environment for every dog in our care. Once you adopt a dog, you become part of the Pawfect family, and we are here to support you throughout your journey together.
+        </p>
+        <p>
+            If you have any questions, please feel free to <a href="/contact" class="policy-link">Contact Us</a>.
+        </p>
+    </div>
+
+</div>
