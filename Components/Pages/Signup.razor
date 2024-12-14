@@ -1,5 +1,8 @@
 @layout LoginLayout
 @using PawfectMatch.Components.Layout
+@using PawfectMatch.Components.Pages.Models
+@using PawfectMatch.Data
+@inject PawfectMatchContext dbContext
 @page "/signup"
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
@@ -56,5 +59,17 @@
         // Add the new user
         Users[NewUsername] = NewPassword;
         SignUpMessage = "Sign-up successful! You can now log in.";
+
+        var user = new User
+            {
+                username = NewUsername,
+                password = NewPassword
+            };
+
+
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
+    
+
     }
 }

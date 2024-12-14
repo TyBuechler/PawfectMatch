@@ -1,6 +1,6 @@
 ﻿namespace PawfectMatch.Components.Pages.Models
 { 
-        public class dbSser
+        public class dbUser
         {
             public int Id { get; set; } // Primary Key
             public string Username { get; set; } // Username

@@ -17,13 +17,13 @@
     }
     else {
         <dl class="row">
-            <dt class="col-sm-2">password</dt>
+            <dt class="col-sm-2">Username</dt>
+            <dd class="col-sm-10">@user.username</dd>
+
+            <dt class="col-sm-2">Password</dt>
             <dd class="col-sm-10">@user.password</dd>
         </dl>
-        <div>
-            <a href="@($"/users/edit?username={user.username}")">Edit</a> |
-            <a href="@($"/database")">Back to List</a>
-        </div>
+
     }
 </div>
 
