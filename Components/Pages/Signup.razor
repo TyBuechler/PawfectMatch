@@ -1,3 +1,8 @@
+@layout LoginLayout
+@using PawfectMatch.Components.Layout
+@page "/signup"
+@rendermode InteractiveServer
+
 ﻿@page "/signup"
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
@@ -32,7 +37,9 @@
 
     private async Task SignupUser()
     {
+
         if (string.IsNullOrWhiteSpace(newUsername) || string.IsNullOrWhiteSpace(newPassword))
+
         {
             message = "Username and password cannot be empty.";
             return;
