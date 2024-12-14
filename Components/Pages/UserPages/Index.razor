@@ -1,0 +1,36 @@
+﻿@page "/database"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using PawfectMatch.Components.Pages.Models
+@using PawfectMatch.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<PawfectMatch.Data.PawfectMatchContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="users/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.User">
+    <PropertyColumn Property="user => user.password" />
+
+    <TemplateColumn Context="user">
+        <a href="@($"users/edit?username={user.username}")">Edit</a> |
+        <a href="@($"users/details?username={user.username}")">Details</a> |
+        <a href="@($"users/delete?username={user.username}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private PawfectMatchContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
