@@ -1,6 +1,6 @@
-
-﻿@page "/signup"
-@inject NavigationManager Navigation
+@layout LoginLayout
+@using PawfectMatch.Components.Layout
+@page "/signup"
 
 <h3>Sign Up</h3>
 
@@ -33,7 +33,8 @@
     private async Task SignupUser()
     {
 
-        if (string.IsNullOrWhiteSpace(newUsername) || string.IsNullOrWhiteSpace(newPassword))
+        // Check if the username is already taken
+        if (Users.ContainsKey(NewUsername))
 
         {
             message = "Username and password cannot be empty.";
@@ -42,17 +43,11 @@
 
         if (newPassword != confirmPassword)
         {
-            message = "Passwords do not match.";
-            return;
+
+            // Add the new user
+            Users[NewUsername] = NewPassword;
+            SignUpMessage = "Sign-up successful! You can now log in.";
         }
 
-        // Replace with actual user creation logic
-        message = "Account created successfully!";
-        // Redirect or handle account creation
-    }
-
-    private void NavigateToLogin()
-    {
-        Navigation.NavigateTo("/login");
     }
 }
