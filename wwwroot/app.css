@@ -1,7 +1,5 @@
 html, body {
     font-family: "Georgia", Helvetica, Arial, sans-serif;
-    background: linear-gradient(45deg, #6a0dad, #4b0082);
-    color: white;
 }
 
 a, .btn-link {
