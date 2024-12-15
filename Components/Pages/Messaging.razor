@@ -6,106 +6,103 @@
 
 @inject IMessagingBrokerClient client
 
-<h2>Messaging</h2>
+<h2 class="text-center mt-4">Messaging</h2>
 
 <!-- Messaging Producer Section -->
-<h3>Messaging Producer</h3>
-<div class="col-md-6 w-70">
-    <label class="form-label">Subject:</label>
-    <InputText @bind-Value="topicName" class="px-sm-2 w-70" />
-    <Spinner Class="me-3" Visible="isLoading" Type="SpinnerType.Dots" Color="SpinnerColor.Danger" Size="SpinnerSize.ExtraLarge" />
-
-    <Button Color="ButtonColor.Primary" class="me-2" Disabled="@(string.IsNullOrEmpty(topicName) || string.IsNullOrEmpty(messageContent))" @onclick="publish">
-        Publish
-    </Button><p />
+<div class="card mt-4">
+    <div class="card-header bg-primary text-white">
+        <h3>Send a Message</h3>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <label for="email" class="form-label">Email:</label>
+            <InputText id="email" @bind-Value="userEmail" class="form-control" placeholder="Enter your email" />
+        </div>
+        <div class="mb-3">
+            <label for="subject" class="form-label">Subject:</label>
+            <InputText id="subject" @bind-Value="topicName" class="form-control" placeholder="Enter a subject" />
+        </div>
+        <div class="mb-3">
+            <label for="message" class="form-label">Message:</label>
+            <InputTextArea id="message" @bind-Value="messageContent" rows="5" class="form-control" placeholder="Write your message here"></InputTextArea>
+        </div>
+        <div class="d-flex align-items-center">
+            <Spinner Class="me-3" Visible="isLoading" Type="SpinnerType.Dots" Color="SpinnerColor.Danger" Size="SpinnerSize.Medium" />
+            <Button Color="ButtonColor.Primary" Disabled="@(string.IsNullOrEmpty(userEmail) || string.IsNullOrEmpty(topicName) || string.IsNullOrEmpty(messageContent))" @onclick="publish">
+                <i class="fas fa-paper-plane"></i> Send
+            </Button>
+        </div>
+    </div>
 </div>
 
-<div class="col-md-6 w-50">
-    <InputTextArea @bind-Value="@messageContent" rows="5" class="px-md-2 border-1 w-100"></InputTextArea>
+<!-- Sent Messages Section -->
+<div class="card mt-4">
+    <div class="card-header bg-success text-white">
+        <h3>Your Sent Messages</h3>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <label for="searchSubject" class="form-label">Search by Subject:</label>
+            <InputText id="searchSubject" @bind-Value="searchSubject" class="form-control" placeholder="Enter a subject to search" />
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach (var message in FilteredMessages)
+            {
+                <li class="list-group-item">
+                    <strong>From:</strong> @message.Email <br />
+                    <strong>Subject:</strong> @message.Subject <br />
+                    <strong>Message:</strong> @message.Content <br />
+                    <small class="text-muted">@message.Timestamp.ToString("g")</small>
+                </li>
+            }
+        </ul>
+    </div>
 </div>
-
-<!-- Messaging Consumer Section -->
-<h3>Your Messages</h3>
-<div class="col-md-6 w-70">
-    <label class="form-label">Search by Subject:</label>
-    <InputText @bind-Value="consumeTopicName" class="px-sm-2 w-70" />
-    <Spinner Class="me-3" Visible="isLoading" Type="SpinnerType.Dots" Color="SpinnerColor.Danger" Size="SpinnerSize.ExtraLarge" />
-
-    <Button Color="ButtonColor.Primary" class="me-2" Disabled="@(string.IsNullOrEmpty(consumeTopicName))" @onclick="startConsume">
-        @Title
-    </Button><p />
-</div>
-
-<!-- Events List -->
-<h5> Events:</h5>
-<ul class="list-group">
-    @foreach (var eventTrack in events)
-    {
-        <li class="list-group-item">
-            <strong>@eventTrack.EventTime.ToString("g")</strong> - <strong>@eventTrack.Topic</strong>: 
-            <span class="@(eventTrack.IsError ? "text-danger" : "text-primary")">@eventTrack.Message</span>
-        </li>
-    }
-</ul>
 
 @code {
-    private bool isLoading = default!;
-    record EventTrack(DateTime EventTime, string Topic, string Message, bool IsError = false);
-    private List<EventTrack> events = new();
+    private bool isLoading = false;
 
-    // Publish part
-    private string? messageContent = "sample text to publish to selected topic";
-    private string? topicName = default!;
+    // User input fields
+    private string? userEmail = string.Empty;
+    private string? topicName = string.Empty;
+    private string? messageContent = string.Empty;
 
-    // Consume part
-    private string? consumeTopicName = default!;
-    private bool isStarted = false;
-    private string Title => !isStarted ? "Start Listening" : "Stop Listening";
-    private CancellationToken token;
-    private CancellationTokenSource source;
+    // Search functionality
+    private string? searchSubject = string.Empty;
 
-    protected override async Task OnInitializedAsync()
-    {
-        events.Add(new(DateTime.Now, "web app", "Initialized"));
-        source = new CancellationTokenSource();
-        token = source.Token;
+    // Message storage
+    private List<Message> sentMessages = new();
 
-        client.MessageConsumed += MessageConsumedEvent!;
-    }
+    // Data structure for storing messages
+    private record Message(string Email, string Subject, string Content, DateTime Timestamp);
+
+    // Filtered messages based on search
+    private IEnumerable<Message> FilteredMessages => string.IsNullOrEmpty(searchSubject)
+        ? sentMessages
+        : sentMessages.Where(m => m.Subject.Contains(searchSubject, StringComparison.OrdinalIgnoreCase));
 
     private async Task publish()
     {
-        var result = await client.PublishAsync(topicName!, messageContent!);
-        events.Add(new(DateTime.Now, topicName! + " topic", "Published new message"));
-        events.Add(new(DateTime.Now, topicName! + " topic", result));
-        StateHasChanged();
-    }
-
-    private async Task MessageConsumedEvent(object sender, string e)
-    {
-        await InvokeAsync(() =>
+        isLoading = true;
+        try
         {
-            events.Add(new(DateTime.Now, consumeTopicName! + " topic", e));
+            var result = await client.PublishAsync(topicName!, messageContent!);
+            // Add the message to the sent messages list
+            sentMessages.Add(new Message(userEmail!, topicName!, messageContent!, DateTime.Now));
+            events.Add(new EventTrack(DateTime.Now, topicName! + " topic", "Published new message"));
+        }
+        catch (Exception ex)
+        {
+            events.Add(new EventTrack(DateTime.Now, "Error", ex.Message, true));
+        }
+        finally
+        {
+            isLoading = false;
             StateHasChanged();
-        });
+        }
     }
 
-    private async Task startConsume()
-    {
-        if (!isStarted)
-        {
-            await InvokeAsync(() =>
-            {
-                client.StartListeningAsync(consumeTopicName!, token);
-                events.Add(new(DateTime.Now, "web app", "Started listening..."));
-                isStarted = true;
-            });
-        }
-        else
-        {
-            source.Cancel();
-            client.StopListening(token);
-            isStarted = false;
-        }
-    }
+    // Events for debug purposes
+    record EventTrack(DateTime EventTime, string Topic, string Message, bool IsError = false);
+    private List<EventTrack> events = new();
 }
