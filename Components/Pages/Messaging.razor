@@ -6,12 +6,12 @@
 
 @inject IMessagingBrokerClient client
 
-<h2>Messaging Client: Publisher and Consumer</h2>
+<h2>Messaging</h2>
 
 <!-- Messaging Producer Section -->
 <h3>Messaging Producer</h3>
 <div class="col-md-6 w-70">
-    <label class="form-label">Topic Name:</label>
+    <label class="form-label">Subject:</label>
     <InputText @bind-Value="topicName" class="px-sm-2 w-70" />
     <Spinner Class="me-3" Visible="isLoading" Type="SpinnerType.Dots" Color="SpinnerColor.Danger" Size="SpinnerSize.ExtraLarge" />
 
@@ -25,9 +25,9 @@
 </div>
 
 <!-- Messaging Consumer Section -->
-<h3>Messaging Consumer</h3>
+<h3>Your Messages</h3>
 <div class="col-md-6 w-70">
-    <label class="form-label">Topic Name:</label>
+    <label class="form-label">Search by Subject:</label>
     <InputText @bind-Value="consumeTopicName" class="px-sm-2 w-70" />
     <Spinner Class="me-3" Visible="isLoading" Type="SpinnerType.Dots" Color="SpinnerColor.Danger" Size="SpinnerSize.ExtraLarge" />
 

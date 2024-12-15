@@ -14,18 +14,36 @@
     {
         <p class="login-prompt">Please log in to access more features.</p>
     }
+
+    @* Debugging information *@
+    <p>@(isAuthenticated ? "Authenticated" : "Not Authenticated")</p>
 </div>
 
 @code {
     private bool isAuthenticated;
 
+    // This method will be called when the component is initialized.
     protected override async Task OnInitializedAsync()
     {
         // Get the authentication state when the component is initialized
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
+        // Debugging: Check if the user identity is null
+        if (user.Identity == null)
+        {
+            Console.WriteLine("User Identity is null");
+        }
+        else
+        {
+            Console.WriteLine($"User Name: {user.Identity.Name}");
+            Console.WriteLine($"Is Authenticated: {user.Identity.IsAuthenticated}");
+        }
+
         // Check if the user is authenticated and update the state
         isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+
+        // Trigger a re-render to reflect the updated state
+        StateHasChanged();
     }
 }
