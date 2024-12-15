@@ -1,9 +1,11 @@
 ﻿@page "/dogsearch"
 @using PawfectMatch.Components.Pages.Models
 @using PawfectMatch.Components.Services
+@using PawfectMatch.Components.Layout
+@using PawfectMatch.Data
+@using Microsoft.EntityFrameworkCore
 @inject NavigationManager Navigation
-@using Microsoft.AspNetCore.Components
-@inject DogService DogService
+@inject PawfectMatchContext DbContext
 @rendermode InteractiveServer
 
 <PageTitle>Dog Search</PageTitle>
@@ -26,44 +28,55 @@
 <ul>
     @foreach (var dog in filteredDogs)
     {
-        if (dog.IsAvailable)
-        {
-            <li>
-                <img src="images/@dog.ImageUrl" alt="@dog.Name" style="height:200px;" />
-                <p>Name: @dog.Name</p>
-                <p>Breed: @dog.Breed</p>
-                <p>Age: @dog.Age</p>
-                <p>Size in pounds: @dog.Size</p>
-                <button @onclick="() => NavigateToDetails(dog.Id)" style="margin-bottom:20px">View Dog</button>
-            </li>
-        }
+        <li>
+            <img src="images/@dog.ImageUrl" alt="@dog.Name" style="height:200px;" />
+            <p>Name: @dog.Name</p>
+            <p>Breed: @dog.Breed</p>
+            <p>Age: @dog.Age</p>
+            <p>Size in pounds: @dog.Size</p>
+            <button @onclick="() => NavigateToDetails(dog.Id)" style="margin-bottom:20px">View Dog</button>
+        </li>
     }
 </ul>
 
 @code {
-    private List<Dog> dogs;
-    private List<Dog> filteredDogs;
-    private List<string> breeds;
+    private List<Dog> filteredDogs = new();
+    private List<string> breeds = new();
     private string selectedBreed = "";
 
     protected override async Task OnInitializedAsync()
     {
-        dogs = await DogService.GetDogsAsync();
-        filteredDogs = dogs;
-        breeds = dogs.Select(d => d.Breed).Distinct().ToList();
+        // Fetch all available breeds from the database
+        breeds = await DbContext.Dog
+            .AsNoTracking()
+            .Where(d => d.IsAvailable)
+            .Select(d => d.Breed)
+            .Distinct()
+            .ToListAsync();
+
+        // Fetch all available dogs initially
+        await LoadFilteredDogsAsync();
     }
 
-    private void FilterDogs(ChangeEventArgs e)
+    private async Task LoadFilteredDogsAsync()
     {
-        selectedBreed = e.Value.ToString();
-        if (string.IsNullOrEmpty(selectedBreed))
+        // Query the database for dogs based on the selected breed
+        IQueryable<Dog> query = DbContext.Dog.AsNoTracking();
+
+        if (!string.IsNullOrEmpty(selectedBreed))
         {
-            filteredDogs = dogs;
+            query = query.Where(d => d.Breed == selectedBreed);
         }
-        else
-        {
-            filteredDogs = dogs.Where(d => d.Breed == selectedBreed).ToList();
-        }
+
+        filteredDogs = await query
+            .Where(d => d.IsAvailable) // Include only available dogs
+            .ToListAsync();
+    }
+
+    private async Task FilterDogs(ChangeEventArgs e)
+    {
+        selectedBreed = e.Value?.ToString();
+        await LoadFilteredDogsAsync();
     }
 
     private void NavigateToDetails(int id)
