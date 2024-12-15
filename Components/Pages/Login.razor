@@ -4,8 +4,8 @@
 @using PawfectMatch.Data
 @using Microsoft.EntityFrameworkCore
 @inject PawfectMatchContext DbContext
-@page "/Login"
 @inject NavigationManager Navigation
+@page "/Login"
 @rendermode InteractiveServer
 
 <div class="login-container">
@@ -31,7 +31,7 @@
     </form>
 
     <p class="signup-text-sub">
-        Don't have an account? <a href="/signup">Sign up here</a>.
+        Don't have an account? <a href="/signup">Sign up here</a>.<br />
     </p>
 </div>
 
@@ -48,16 +48,13 @@
 
         if (user != null)
         {
-            if (user.password == "Administrator")
+            if (user.password == Password)
             {
-                Navigation.NavigateTo("/Admin");
-            }
-            else if (user.password == Password) // Assuming Password is a variable holding the correct value
-            {
+              
+
+                // Redirect the user to the home page or wherever appropriate
                 Navigation.NavigateTo("/");
             }
-        
-
             else
             {
                 LoginMessage = "Invalid username or password.";

@@ -1,5 +1,5 @@
 html, body {
-    font-family: "Georgia", Helvetica, Arial, sans-serif;
+    font-family: "Georgia", "Times New Roman", Times, serif, Helvetica, Arial, sans-serif;
     background: linear-gradient(45deg, #6a0dad, #4b0082);
     color: white;
     margin: 0;
@@ -82,13 +82,15 @@ h1 {
 
 /* Styling for login and signup containers */
 .login-container, .signup-container {
-    max-width: 400px;
-    margin: 2rem auto;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 10px;
+    text-align: center;
     background-color: #f9f9f9;
-    color: #333;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    color: black; /* Ensure text color is black for better readability */
 }
 
 /* Text styling for login and signup sections */
@@ -139,6 +141,4 @@ h1 {
 .login-link {
     color: #6a0dad;
     text-align: center;
-    display: block;
-    margin-top: 1rem;
-}
+    display: block
