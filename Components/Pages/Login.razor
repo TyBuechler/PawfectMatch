@@ -1,5 +1,9 @@
 @layout LoginLayout
 @using PawfectMatch.Components.Layout
+@using PawfectMatch.Components.Pages.Models
+@using PawfectMatch.Data
+@using Microsoft.EntityFrameworkCore
+@inject PawfectMatchContext DbContext
 @page "/Login"
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
@@ -26,7 +30,7 @@
         <button type="button" @onclick="LoginUser" class="btn btn-primary">Login</button>
     </form>
 
-    <p class="signup-text-sub"> 
+    <p class="signup-text-sub">
         Don't have an account? <a href="/signup">Sign up here</a>.
     </p>
 </div>
@@ -36,25 +40,33 @@
     private string Password = string.Empty;
     private string LoginMessage = string.Empty;
 
-    // Simulated user storage (replace with a database in a real app)
-    private Dictionary<string, string> Users = new Dictionary<string, string>
-    {
-        { "admin", "admin" } // Predefined user for testing
-    };
-
     // Login method
-    private void LoginUser()
+    private async Task LoginUser()
     {
-        // Check if the username and password are correct
-        if (Users.ContainsKey(Username) && Users[Username] == Password)
+        // Retrieve the user from the database based on the username
+        var user = await DbContext.Users.FirstOrDefaultAsync(u => u.username == Username);
+
+        if (user != null)
         {
-            // Navigate to the Home page
-            Navigation.NavigateTo("/");
+            if (user.password == "Administrator")
+            {
+                Navigation.NavigateTo("/Admin");
+            }
+            else if (user.password == Password) // Assuming Password is a variable holding the correct value
+            {
+                Navigation.NavigateTo("/");
+            }
+        
+
+            else
+            {
+                LoginMessage = "Invalid username or password.";
+            }
         }
         else
         {
+            // User not found
             LoginMessage = "Invalid username or password.";
         }
     }
 }
-

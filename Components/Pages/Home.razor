@@ -21,9 +21,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // Get the authentication state when the component is initialized
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        isAuthenticated = user.Identity.IsAuthenticated;
+        // Check if the user is authenticated and update the state
+        isAuthenticated = user.Identity?.IsAuthenticated ?? false;
     }
 }

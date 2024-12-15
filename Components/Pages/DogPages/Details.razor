@@ -1,0 +1,60 @@
+﻿@page "/dogs/details"
+@using Microsoft.EntityFrameworkCore
+@using PawfectMatch.Components.Pages.Models
+@inject IDbContextFactory<PawfectMatch.Data.PawfectMatchContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Dog</h2>
+    <hr />
+    @if (dog is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@dog.Name</dd>
+            <dt class="col-sm-2">Breed</dt>
+            <dd class="col-sm-10">@dog.Breed</dd>
+            <dt class="col-sm-2">Age</dt>
+            <dd class="col-sm-10">@dog.Age</dd>
+            <dt class="col-sm-2">Size</dt>
+            <dd class="col-sm-10">@dog.Size</dd>
+            <dt class="col-sm-2">IsAvailable</dt>
+            <dd class="col-sm-10">@dog.IsAvailable</dd>
+            <dt class="col-sm-2">MedRecords</dt>
+            <dd class="col-sm-10">@dog.MedRecords</dd>
+            <dt class="col-sm-2">PrevHistory</dt>
+            <dd class="col-sm-10">@dog.PrevHistory</dd>
+            <dt class="col-sm-2">ImageUrl</dt>
+            <dd class="col-sm-10">@dog.ImageUrl</dd>
+        </dl>
+        <div>
+            <a href="@($"/dogs/edit?id={dog.Id}")">Edit</a> |
+            <a href="@($"/dogdatabase")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Dog? dog;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        dog = await context.Dog.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (dog is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
