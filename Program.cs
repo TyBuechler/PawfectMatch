@@ -20,6 +20,8 @@ builder.Services.AddDbContextFactory<PawfectMatchContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PawfectMatchContext")
     ?? throw new InvalidOperationException("Connection string 'PawfectMatchContext' not found.")));
 
+
+
 // Add other services
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
