@@ -29,11 +29,12 @@
         if (dog.IsAvailable)
         {
             <li>
-                <img src="images/@dog.ImageUrl" alt="@dog.Name" style="width:200px;height:200px;" />
+                <img src="images/@dog.ImageUrl" alt="@dog.Name" style="height:200px;" />
                 <p>Name: @dog.Name</p>
                 <p>Breed: @dog.Breed</p>
                 <p>Age: @dog.Age</p>
-                <button @onclick="() => NavigateToDetails(dog.Id)">View Dog</button>
+                <p>Size in pounds: @dog.Size</p>
+                <button @onclick="() => NavigateToDetails(dog.Id)" style="margin-bottom:20px">View Dog</button>
             </li>
         }
     }
