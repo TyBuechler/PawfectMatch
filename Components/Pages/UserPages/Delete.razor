@@ -50,6 +50,6 @@
         using var context = DbFactory.CreateDbContext();
         context.User.Remove(user!);
         await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/users");
+        NavigationManager.NavigateTo("/database");
     }
 }
