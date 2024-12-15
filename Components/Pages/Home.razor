@@ -4,21 +4,49 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="home-container">
-    <h3>Welcome to the Home Page!</h3>
+    <div class="hero-section">
+        <h1>Welcome to Pawfect Match!</h1>
+        <p>Find your new best friend today.</p>
+        <a href="/adopt" class="btn btn-primary">Adopt a Dog</a>
+        <a href="/about-us" class="btn btn-secondary">Learn More</a>
+    </div>
 
+    <div class="content-section">
+        @if (isAuthenticated)
+        {
+            <p class="welcome-message">Welcome back! Explore our adoptable dogs and see who needs a loving home.</p>
+            <a href="/profile" class="btn btn-outline-primary">View Your Profile</a>
+        }
+        else
+        {
+            <p class="login-prompt">
+                <strong>Not a member?</strong> <a href="/signup">Sign up</a> now to access personalized features and track your adoptions.
+            </p>
+            <p class="login-prompt">
+                Already have an account? <a href="/login">Log in here</a>.
+            </p>
+        }
+    </div>
 
-
-    @if (isAuthenticated)
-    {
-        <p class="welcome-message">You are successfully logged in.</p>
-    }
-    else
-    {
-        <p class="login-prompt">Please log in to access more features.</p>
-    }
-
-    @* Debugging information *@
-    <p>@(isAuthenticated ? "Authenticated" : "Not Authenticated")</p>
+    <div class="adoptable-dogs-section">
+        <h2>Meet Our Dogs</h2>
+        <p>These adorable pups are waiting to meet you:</p>
+        <div class="dog-cards">
+            <!-- Example dog cards (to be populated dynamically) -->
+            <div class="dog-card">
+                <img src="images/dog1.jpg" alt="Dog 1" />
+                <h3>Buddy</h3>
+                <p>Age: 3 years | Breed: Labrador</p>
+                <a href="/details/buddy" class="btn btn-primary">Adopt Me</a>
+            </div>
+            <div class="dog-card">
+                <img src="images/dog2.jpg" alt="Dog 2" />
+                <h3>Daisy</h3>
+                <p>Age: 2 years | Breed: Beagle</p>
+                <a href="/details/daisy" class="btn btn-primary">Adopt Me</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 
@@ -26,28 +54,11 @@
 @code {
     private bool isAuthenticated;
 
-    // This method will be called when the component is initialized.
     protected override async Task OnInitializedAsync()
     {
-        // Get the authentication state when the component is initialized
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-
-        // Debugging: Check if the user identity is null
-        if (user.Identity == null)
-        {
-            Console.WriteLine("User Identity is null");
-        }
-        else
-        {
-            Console.WriteLine($"User Name: {user.Identity.Name}");
-            Console.WriteLine($"Is Authenticated: {user.Identity.IsAuthenticated}");
-        }
-
-        // Check if the user is authenticated and update the state
         isAuthenticated = user.Identity?.IsAuthenticated ?? false;
-
-        // Trigger a re-render to reflect the updated state
         StateHasChanged();
     }
 }
