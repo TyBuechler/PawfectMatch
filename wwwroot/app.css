@@ -82,13 +82,14 @@ h1 {
 
 /* Styling for login and signup containers */
 .login-container, .signup-container {
-    max-width: 400px;
-    margin: 2rem auto;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 10px;
+    text-align: center;
     background-color: #f9f9f9;
-    color: #333;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Text styling for login and signup sections */
@@ -141,4 +142,16 @@ h1 {
     text-align: center;
     display: block;
     margin-top: 1rem;
+}
+
+.login-prompt {
+    color: #ff5722; /* Orange color for login prompt */
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.welcome-message {
+    color: #4CAF50; /* Green color for successful login message */
+    font-size: 18px;
+    margin-top: 20px;
 }
