@@ -10,6 +10,6 @@
         public bool IsAvailable { get; set; }
         public string MedRecords { get; set; }
         public string PrevHistory { get; set; }
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

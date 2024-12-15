@@ -14,7 +14,7 @@ namespace PawfectMatch.Components.Services
         new Dog { Id = 6, Name = "Rocky", Breed = "Beagle", Age = 3, Size = 60, IsAvailable = true, MedRecords = "Vaccinated", PrevHistory = "Rocky was part of a litter raised on a farm.", ImageUrl = "beagle1.jpeg" },
         new Dog { Id = 7, Name = "Lucy", Breed = "Boxer", Age = 4, Size = 75, IsAvailable = true, MedRecords = "Vaccinated", PrevHistory = "Lucy was trained for agility competitions.", ImageUrl = "boxer1.jpeg" },
         new Dog { Id = 8, Name = "Daisy", Breed = "Siberian Husky", Age = 2, Size = 60, IsAvailable = true, MedRecords = "Vaccinated", PrevHistory = "Daisy grew up in a snowy climate and loves outdoor play.", ImageUrl = "husky1.jpeg" },
-        new Dog { Id = 9, Name = "Bailey", Breed = "Shih Tzu", Age = 5, Size = 20, IsAvailable = true, MedRecords = "Vaccinated", PrevHistory = "Bailey was a companion to a retired couple.", ImageUrl = "shihtzu1.jpeg" },   
+        new Dog { Id = 9, Name = "Bailey", Breed = "Shih Tzu", Age = 5, Size = 20, IsAvailable = true, MedRecords = "Vaccinated", PrevHistory = "Bailey was a companion to a retired couple.", ImageUrl = "shihtzu1.jpeg" },
         new Dog { Id = 10, Name = "Luna", Breed = "Golden Retriever", Age = 2, Size = 60, IsAvailable = true, MedRecords = "Vaccinated", PrevHistory = "Luna was born and raised here.", ImageUrl = "golden2.jpeg" },
         // Add more dogs after first stuff
     };
@@ -29,6 +29,8 @@ namespace PawfectMatch.Components.Services
             var dog = dogs.FirstOrDefault(d => d.Id == id);
             return Task.FromResult(dog);
         }
+
+
     }
 
 }
