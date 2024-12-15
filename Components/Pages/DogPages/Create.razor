@@ -49,12 +49,20 @@
                 <label for="prevhistory" class="form-label">PrevHistory:</label> 
                 <InputText id="prevhistory" @bind-Value="Dog.PrevHistory" class="form-control" /> 
                 <ValidationMessage For="() => Dog.PrevHistory" class="text-danger" /> 
-            </div>        
+            </div>
             <div class="mb-3">
-                <label for="imageurl" class="form-label">ImageUrl:</label> 
-                <InputText id="imageurl" @bind-Value="Dog.ImageUrl" class="form-control" /> 
-                <ValidationMessage For="() => Dog.ImageUrl" class="text-danger" /> 
-            </div>        
+                <label for="imageupload" class="form-label">Upload Image:</label>
+                <InputFile id="imageupload" OnChange="HandleImageUpload" class="form-control" />
+                <ValidationMessage For="() => Dog.ImageUrl" class="text-danger" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(Dog.ImageUrl))
+            {
+                <img src="@Dog.ImageUrl" alt="Dog Image" style="width:200px; height:200px; margin-top:10px;" />
+
+            }
+
+
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -76,4 +84,34 @@
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/dogdatabase");
     }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+
+        if (file != null)
+        {
+            // Set the directory for saving uploaded files
+            var uploadPath = Path.Combine("wwwroot", "images");
+            var fileName = $"{Guid.NewGuid()}_{file.Name}";
+            var filePath = Path.Combine(uploadPath, fileName);
+
+            // Ensure the directory exists
+            if (!Directory.Exists(uploadPath))
+            {
+                Directory.CreateDirectory(uploadPath);
+            }
+
+            // Save the file to the server
+            await using var stream = File.Create(filePath);
+            await file.OpenReadStream().CopyToAsync(stream);
+
+            // Set the relative path for the image
+            Dog.ImageUrl = $"/images/{fileName}"; 
+
+        }
+    }
+
+
+
 }
