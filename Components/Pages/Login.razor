@@ -48,10 +48,16 @@
 
         if (user != null)
         {
-            if (user.password == Password) 
+            if (user.password == "Administrator")
+            {
+                Navigation.NavigateTo("/Admin");
+            }
+            else if (user.password == Password) // Assuming Password is a variable holding the correct value
             {
                 Navigation.NavigateTo("/");
             }
+        
+
             else
             {
                 LoginMessage = "Invalid username or password.";
