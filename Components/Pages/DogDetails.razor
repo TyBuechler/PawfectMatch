@@ -6,29 +6,46 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-<h1>@selectedDog.Name's Details</h1>
-<img src="images/@selectedDog.ImageUrl" alt="@selectedDog.Name" style="width:200px;height:200px;" />
-<p>Name: @selectedDog.Name</p>
-<p>Breed: @selectedDog.Breed</p>
-<p>Age: @selectedDog.Age</p>
-<p>Size in pounds: @selectedDog.Size </p>
-<p>Medical Report: @selectedDog.MedRecords</p>
-<p>Previous history of @selectedDog.Name: @selectedDog.PrevHistory</p>
-<button @onclick="() => NavigateToSearch()">Back to search</button>
+@if (selectedDog == null)
+{
+    <p>Loading dog details...</p>
+}
+else
+{
+    <h1>@selectedDog.Name's Details</h1>
+    <img src="@selectedDog.ImageUrl" alt="@selectedDog.Name" style="width:200px;height:200px;" />
+    <p>Name: @selectedDog.Name</p>
+    <p>Breed: @selectedDog.Breed</p>
+    <p>Age: @selectedDog.Age</p>
+    <p>Size in pounds: @selectedDog.Size</p>
+    <p>Medical Report: @selectedDog.MedRecords</p>
+    <p>Previous history of @selectedDog.Name: @selectedDog.PrevHistory</p>
+    <button @onclick="NavigateToSearch" style="margin-top:20px;">Back to search</button>
+}
 
 @code {
     [Parameter]
     public int Id { get; set; }
 
-    private Dog selectedDog;
+    private Dog? selectedDog;
 
     protected override async Task OnParametersSetAsync()
     {
-        selectedDog = await DogService.GetDogByIdAsync(Id);
+        try
+        {
+            // Fetch the dog details from the database
+            selectedDog = await DogService.GetDogByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            // Handle cases where the dog is not found or an error occurs
+            Console.WriteLine($"Error fetching dog details: {ex.Message}");
+            selectedDog = null;
+        }
     }
 
     private void NavigateToSearch()
     {
-        Navigation.NavigateTo($"/dogsearch");
+        Navigation.NavigateTo("/dogsearch");
     }
 }

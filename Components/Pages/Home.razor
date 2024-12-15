@@ -6,6 +6,8 @@
 <div class="home-container">
     <h3>Welcome to the Home Page!</h3>
 
+
+
     @if (isAuthenticated)
     {
         <p class="welcome-message">You are successfully logged in.</p>
@@ -18,6 +20,8 @@
     @* Debugging information *@
     <p>@(isAuthenticated ? "Authenticated" : "Not Authenticated")</p>
 </div>
+
+
 
 @code {
     private bool isAuthenticated;
