@@ -30,7 +30,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Register DogService
 builder.Services.AddScoped<DogService>();
 builder.Services.AddScoped<IMessagingBrokerClient, MessagingBrokerClient>();
-
+builder.Services.AddHttpClient();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
