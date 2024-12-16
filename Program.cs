@@ -15,6 +15,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
+
 // Register the DbContextFactory
 builder.Services.AddDbContextFactory<PawfectMatchContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PawfectMatchContext")
