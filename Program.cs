@@ -7,20 +7,20 @@ using PawfectMatch.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register HttpClient with your base address (pointing to the UserAuthentication API)
+// Register HttpClient with your base address 
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:7142/") // Replace with the correct API base URL
+    BaseAddress = new Uri("https://localhost:7142/") 
 });
 
 // Set up cookie-based authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.Cookie.Name = "auth_token"; // Custom cookie name
-        options.LoginPath = "/Login"; // Redirect path for login
-        options.Cookie.MaxAge = TimeSpan.FromMinutes(30); // Cookie expiry
-        options.AccessDeniedPath = "/access-denied"; // Redirect path for access denial
+        options.Cookie.Name = "auth_token";
+        options.LoginPath = "/Login"; 
+        options.Cookie.MaxAge = TimeSpan.FromMinutes(30); 
+        options.AccessDeniedPath = "/access-denied"; 
     });
 
 // Add authorization policies
@@ -39,11 +39,11 @@ builder.Services.AddBlazoredLocalStorage();
 
 // Register custom services like DogService and MessagingBrokerClient
 builder.Services.AddScoped<DogService>();
-builder.Services.AddScoped<IMessagingBrokerClient, MessagingBrokerClient>(); // Ensure MessagingBrokerClient is implemented
+builder.Services.AddScoped<IMessagingBrokerClient, MessagingBrokerClient>(); 
 
 // Add Razor Components with interactive server rendering
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents(); // Required for Blazor Server interactivity
+    .AddInteractiveServerComponents(); 
 
 // Add developer exception page for database errors (Development only)
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -54,11 +54,11 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    app.UseHsts(); // Enforce strict transport security
+    app.UseHsts(); 
 }
 else
 {
-    app.UseMigrationsEndPoint(); // Enable database migrations endpoint in development
+    app.UseMigrationsEndPoint(); 
 }
 
 app.UseHttpsRedirection();
@@ -66,11 +66,11 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 // Use Authentication and Authorization middleware
-app.UseAuthentication(); // Ensures authentication middleware is invoked
-app.UseAuthorization();  // Ensures authorization middleware is invoked
+app.UseAuthentication(); 
+app.UseAuthorization();  
 
 // Map Razor Components for the Blazor application
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode(); // Enable interactive server rendering for Blazor Server
+    .AddInteractiveServerRenderMode(); 
 
 app.Run();
