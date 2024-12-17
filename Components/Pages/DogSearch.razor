@@ -15,28 +15,42 @@
 <!-- Filters Section -->
 <div>
     <label for="breedFilter">Filter by Breed:</label>
-    <select id="breedFilter" @onchange="FilterDogs">
-        <option value="">All Breeds</option>
+    <div>
+        <!-- Button for 'All Breeds' -->
+        <button @onclick="() => FilterByBreed(null)">All Breeds</button>
         @foreach (var breed in breeds)
         {
-            <option value="@breed">@breed</option>
+            <button @onclick="() => FilterByBreed(breed)">@breed</button>
         }
-    </select>
+    </div>
 </div>
 
 <div>
     <label for="nameFilter">Search by Name:</label>
-    <input id="nameFilter" type="text" @bind="searchName" @oninput="FilterDogs" placeholder="Enter dog name" />
+    <input id="nameFilter" type="text" @bind="searchName" placeholder="Enter dog name" />
 </div>
 
 <div>
     <label for="sizeFilter">Filter by Size:</label>
-    <select id="sizeFilter" @onchange="FilterDogs">
+    <select id="sizeFilter" @onchange="@(async (e) => { selectedSize = e.Value?.ToString(); await ApplyFilters(); })">
         <option value="">All Sizes</option>
         <option value="Small">Small (1-20 lbs)</option>
         <option value="Medium">Medium (21-50 lbs)</option>
         <option value="Large">Large (51+ lbs)</option>
     </select>
+</div>
+
+<div>
+    <label for="ageFilter">Filter by Age:</label>
+    <div>
+        <input type="number" id="minAge" placeholder="Min Age" @bind="minAge" />
+        <input type="number" id="maxAge" placeholder="Max Age" @bind="maxAge" />
+    </div>
+</div>
+
+<!-- Search Button -->
+<div>
+    <button @onclick="ApplyFilters">Search for Dogs</button>
 </div>
 
 <!-- Dogs Grid -->
@@ -59,9 +73,11 @@
 @code {
     private List<Dog> filteredDogs = new();
     private List<string> breeds = new();
-    private string selectedBreed = "";
+    private string selectedBreed = null;
     private string searchName = "";
     private string selectedSize = "";
+    private int? minAge = null;  // Nullable to allow for no age filter
+    private int? maxAge = null;  // Nullable to allow for no age filter
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,47 +97,49 @@
     {
         IQueryable<Dog> query = DbContext.Dog.AsNoTracking().Where(d => d.IsAvailable);
 
-        if (!string.IsNullOrEmpty(selectedBreed))
+        // Apply the breed filter if selectedBreed is not null
+        if (selectedBreed != null)
         {
             query = query.Where(d => d.Breed == selectedBreed);
         }
 
+        // Apply name filter
         if (!string.IsNullOrEmpty(searchName))
         {
             query = query.Where(d => d.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase));
         }
 
+        // Apply size filter
         if (!string.IsNullOrEmpty(selectedSize))
         {
             query = query.Where(d => GetSizeCategory(d.Size) == selectedSize);
         }
 
+        // Apply age filter if both min and max are set
+        if (minAge.HasValue)
+        {
+            query = query.Where(d => d.Age >= minAge.Value);
+        }
+
+        if (maxAge.HasValue)
+        {
+            query = query.Where(d => d.Age <= maxAge.Value);
+        }
+
+        // Fetch the filtered list of dogs
         filteredDogs = await query.ToListAsync();
     }
 
-    private async Task FilterDogs(ChangeEventArgs e)
+    private async Task ApplyFilters()
     {
-        // Determine which filter triggered the event
-        var selectedValue = e.Value?.ToString();
-
-        if (e.Value != null)
-        {
-            if (selectedValue == selectedBreed)
-            {
-                selectedBreed = selectedValue;
-            }
-            else if (selectedValue == searchName)
-            {
-                searchName = selectedValue;
-            }
-            else if (selectedValue == selectedSize)
-            {
-                selectedSize = selectedValue;
-            }
-        }
-
-        // Apply the new filters
+        // Reload the filtered dogs list after applying filters
         await LoadFilteredDogsAsync();
+    }
+
+    private async Task FilterByBreed(string breed)
+    {
+        selectedBreed = breed;
+        await ApplyFilters(); // Apply the breed filter and reload the list of dogs
     }
 
     private string GetSizeCategory(int size)
@@ -136,6 +154,7 @@
         Navigation.NavigateTo($"/dogdetails/{id}");
     }
 }
+
 
 <style>
     .dog-grid {
@@ -152,6 +171,7 @@
         padding: 15px;
         text-align: center;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        color: #000;
     }
 
     .dog-image {
