@@ -5,7 +5,7 @@
 
 <div class="home-container">
     <div class="hero-section">
-        <h1>Welcome to Pawfect Match!</h1>
+        <h1 style="color: rebeccapurple">Welcome to Pawfect Match!</h1>
         <p>Find your new best friend today.</p>
         <a href="/about-us" class="btn btn-secondary">Learn More</a>
     </div>
@@ -57,8 +57,9 @@
         // Replace this with a real API call to fetch dog data
         return Task.FromResult(new List<Dog>
         {
-            new Dog { Id = 1, Name = "Buddy", Age = "3 years", Breed = "Labrador", ImageUrl = "images/dog1.jpg" },
-            new Dog { Id = 2, Name = "Daisy", Age = "2 years", Breed = "Beagle", ImageUrl = "images/dog2.jpg" }
+            new Dog { Id = 1, Name = "Buddy", Age = "3 years", Breed = "Golden Retriever", ImageUrl = "images/dog1.jpg" },
+            new Dog { Id = 2, Name = "Daisy", Age = "2 years", Breed = "Boxer", ImageUrl = "images/dog2.jpg" },
+            new Dog { Id = 3, Name = "Charlie", Age = "1 year", Breed = "Beagle", ImageUrl = "images/beagle1.jpeg" } // Added 3rd dog
         });
     }
 
