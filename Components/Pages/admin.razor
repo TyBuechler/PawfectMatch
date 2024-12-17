@@ -1,14 +1,41 @@
 ﻿@page "/Admin"
+@using PawfectMatch.Components.Pages.Models;
+@using PawfectMatch.Components.Services
+@using PawfectMatch.Components.Layout
+@using PawfectMatch.Data
+@inject NavigationManager Navigation
+@inject PawfectMatchContext DbContext
 
+<style>
+    /* Style only the links inside the specific div */
+    div.link-container a {
+        text-decoration: none;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
 
+        div.link-container a:hover {
+            background-color: #0056b3;
+        }
 
+    /* Add spacing between links */
+    div.link-container a {
+        margin-right: 10px;
+    }
+</style>
 
-<h3>admin</h3>
+<h3>Admin Page</h3>
 
-<div>
+<div class="link-container">
     <a href="@($"/database")">Go to user database</a>
     <a href="@($"/dogdatabase")">Go to dog database</a>
+    <a href="@($"/adoptions")">Go to Adopt Form database</a>
 </div>
+
 @code {
 
 }
