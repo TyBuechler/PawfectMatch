@@ -1,0 +1,39 @@
+﻿@page "/%"
+
+@using Microsoft.AspNetCore.Components.Authorization
+
+<div class="home-container">
+    <h3>Welcome to the Home Page!</h3>
+
+
+        <p class="login-prompt">Please log in to access more features.</p>
+    
+
+    @* Debugging information *@
+    <p> You are Authenticated </p>
+</div>
+
+
+<!-- Login/Logout Section at Bottom Left -->
+<div class="bottom-left-auth">
+        <NavLink class="nav-link" href="/Logout">Logout</NavLink>
+</div>
+
+<style>
+.sidebar .nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #fff; /* Match sidebar color */
+    text-decoration: none;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Hover effect */
+    border-radius: 4px;
+}
+</style>
+
+
+@code {
+   
+}

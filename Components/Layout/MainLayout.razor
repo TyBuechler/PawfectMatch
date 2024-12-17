@@ -1,4 +1,12 @@
 ﻿@inherits LayoutComponentBase
+@using PawfectMatch;
+@using PawfectMatch.Components.Layout
+@using PawfectMatch.Components.Pages.Models
+@using PawfectMatch.Data
+@using System.Security.Claims;
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
 
 <div class="page">
     <div class="sidebar">
@@ -6,13 +14,11 @@
     </div>
 
     <main>
-    <div class="top-row px-4">
-        <div class="top-row-right">
-            <NavLink class="nav-link" href="/Login">Login</NavLink>
+        <div class="top-row px-4">
+            <div class="top-row-right">
+                <!-- Removed login/logout links from here -->
+            </div>
         </div>
-    </div>
-
-  
 
         <article class="content px-4">
             @Body
@@ -20,8 +26,34 @@
     </main>
 </div>
 
+
+
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+<style>
+.bottom-left-auth {
+    position: fixed;
+    bottom: 1rem; /* Adjust for spacing from bottom edge */
+    left: 1rem;   /* Adjust for spacing from left edge */
+    z-index: 1000; /* Ensure it's above other elements if needed */
+    background-color: rgba(255, 255, 255, 0.9); /* Optional background */
+    padding: 0.5rem;
+    border-radius: 0.25rem; /* Rounded edges */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.bottom-left-auth .nav-link {
+    display: block;
+    color: #007bff;
+    text-decoration: none;
+    margin: 0.25rem 0;
+}
+
+.bottom-left-auth .nav-link:hover {
+    text-decoration: underline;
+}
+</style>

@@ -1,0 +1,45 @@
+﻿@page "/securepage"
+@using Microsoft.AspNetCore.Components.Authorization
+@using PawfectMatch.Components.Services
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthProvider
+@inject ILogger<AuthenticationStateProvider> Logger
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Welcome, authenticated user!</h3>
+        <p>You now have access to secure content.</p>
+    </Authorized>
+    <NotAuthorized>
+        <h3>You are not authorized to view this content.</h3>
+        <p>Please log in to continue.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+<p>
+    Authentication status:
+    <strong>@(isAuthenticated ? "Authenticated" : "Not Authenticated")</strong>
+</p>
+
+@if (!string.IsNullOrEmpty(authError))
+{
+    <p class="text-danger">Error: @authError</p>
+}
+
+@code {
+    private bool isAuthenticated;
+    private string authError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Use the extension method from AuthenticationStateProviderExtensions.
+            isAuthenticated = await AuthProvider.IsUserAuthenticatedAsync();
+        }
+        catch (Exception ex)
+        {
+            authError = "Failed to retrieve authentication state. Please try again later.";
+            Logger.LogError(ex, "Error retrieving authentication state.");
+        }
+    }
+}

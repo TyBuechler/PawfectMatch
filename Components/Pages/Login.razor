@@ -1,10 +1,16 @@
 @layout LoginLayout
+@using PawfectMatch;
 @using PawfectMatch.Components.Layout
 @using PawfectMatch.Components.Pages.Models
 @using PawfectMatch.Data
+@using System.Security.Claims;
 @using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
 @inject PawfectMatchContext DbContext
 @inject NavigationManager Navigation
+@inject IHttpContextAccessor HttpContextAccessor
+
 @page "/Login"
 @rendermode InteractiveServer
 
@@ -18,52 +24,81 @@
 
     <form class="login-form">
         <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" @bind="Username" class="form-control" />
+            <label for="username">Username</label>
+            <input type="text" id="username" @bind="Model.username" class="form-control" placeholder="Username" />
         </div>
 
         <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" @bind="Password" class="form-control" />
+            <label for="password">Password</label>
+            <input type="password" id="password" @bind="Model.password" class="form-control" placeholder="Password" />
         </div>
 
         <button type="button" @onclick="LoginUser" class="btn btn-primary">Login</button>
     </form>
 
     <p class="signup-text-sub">
-        Don't have an account? <a href="/signup">Sign up here</a>.<br />
+        Don't have an account? <a href="/signup">Sign up here</a>.
     </p>
 </div>
 
 @code {
-    private string Username = string.Empty;
-    private string Password = string.Empty;
     private string LoginMessage = string.Empty;
 
-    // Login method
+    [SupplyParameterFromForm]
+    public User Model { get; set; } = new User();
+
     private async Task LoginUser()
     {
-        // Retrieve the user from the database based on the username
-        var user = await DbContext.Users.FirstOrDefaultAsync(u => u.username == Username);
-
-        if (user != null)
+        try
         {
-            if (user.password == Password)
-            {
-              
+            var user = await DbContext.Users.FirstOrDefaultAsync(u => u.username == Model.username);
 
-                // Redirect the user to the home page or wherever appropriate
-                Navigation.NavigateTo("/");
-            }
-            else
+            if (user == null)
             {
-                LoginMessage = "Invalid username or password.";
+                LoginMessage = "User not found!";
+                Console.WriteLine("No user found in the database.");
+                StateHasChanged(); // Notify the UI about the updated state
+                return;
             }
+
+            if (user.password != Model.password)
+            {
+                LoginMessage = "Invalid password.";
+                Console.WriteLine($"Passwords do not match: {user.password} != {Model.password}");
+                StateHasChanged(); // Notify the UI about the updated state
+                return;
+            }
+
+            // If user lookup and password match succeed, proceed with authentication
+          /*  var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, Model.username)
+            };
+
+            Console.WriteLine($"Claims created for user {Model.username}");
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            if (HttpContextAccessor.HttpContext == null)
+            {
+                LoginMessage = "HttpContextAccessor.HttpContext is null.";
+                StateHasChanged(); // Notify the UI about the updated state
+                return;
+            }
+
+            await HttpContextAccessor.HttpContext.SignInAsync(principal);
+            */
+          
+
+            // Navigate to the homepage after authentication
+            Navigation.NavigateTo("/%", forceLoad: true);
         }
-        else
+        catch (Exception ex)
         {
-            // User not found
-            LoginMessage = "Invalid username or password.";
+            LoginMessage = $"Login Error: {ex.Message}";
+            Console.WriteLine($"Login Error: {ex.Message}");
+            StateHasChanged(); // Notify the UI about the updated state
         }
     }
 }
