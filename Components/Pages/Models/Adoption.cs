@@ -1,5 +1,5 @@
-﻿using PawfectMatch.Components.Pages.Models;
-using System;
+﻿using System;
+using PawfectMatch.Components.Pages.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -30,5 +30,29 @@ namespace PawfectMatch.Components.Pages.Models
 
         [MaxLength(500)]
         public string AdditionalComments { get; set; } // Optional field for additional comments from the user
+
+        // New Fields
+        [Required]
+        [MaxLength(100)]
+        public string FullName { get; set; } // User's full name
+
+        [Required]
+        [Phone]
+        [MaxLength(20)]
+        public string Phone { get; set; } // User's phone number
+
+        [MaxLength(200)]
+        public string Address { get; set; } // User's address
+
+        [MaxLength(200)]
+        public string Preferences { get; set; } // Dog preferences
+
+        [MaxLength(10)]
+        public string HasPetsBefore { get; set; } // Yes/No answer for past pets
+
+        public bool HomeCheck { get; set; } // Agreement to a home check
+
+        [MaxLength(500)]
+        public string Message { get; set; } // User's message
     }
 }
