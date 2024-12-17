@@ -49,12 +49,18 @@
                 <label for="prevhistory" class="form-label">PrevHistory:</label> 
                 <InputText id="prevhistory" @bind-Value="Dog.PrevHistory" class="form-control" /> 
                 <ValidationMessage For="() => Dog.PrevHistory" class="text-danger" /> 
-            </div>        
+            </div>
             <div class="mb-3">
-                <label for="imageurl" class="form-label">ImageUrl:</label> 
-                <InputText id="imageurl" @bind-Value="Dog.ImageUrl" class="form-control" /> 
-                <ValidationMessage For="() => Dog.ImageUrl" class="text-danger" /> 
-            </div>        
+                <label for="imageurl" class="form-label">Image File Path:</label>
+                <InputText id="imageurl" @bind-Value="Dog.ImageUrl" class="form-control" />
+                <ValidationMessage For="() => Dog.ImageUrl" class="text-danger" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(Dog.ImageUrl))
+            {
+                <img src="@Dog.ImageUrl" alt="@Dog.Name" style="height:200px;" />
+            }
+
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -68,7 +74,6 @@
     [SupplyParameterFromForm]
     private Dog Dog { get; set; } = new();
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
     private async Task AddDog()
     {
         using var context = DbFactory.CreateDbContext();
@@ -76,4 +81,6 @@
         await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/dogdatabase");
     }
+
+
 }
