@@ -12,7 +12,8 @@
 }
 else
 {
-    <EditForm Model="@adoptionForm" OnValidSubmit="HandleValidSubmit">
+
+    <EditForm Model="@adoptionForm" OnValidSubmit="HandleValidSubmit" FormName="AdoptionForm">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -28,11 +29,12 @@ else
 
         <button type="submit" class="btn btn-primary">Submit Adoption Request</button>
     </EditForm>
+
 }
 
 @code {
     [Parameter] public int dogId { get; set; }
-    private bool isAuthenticated;
+    private bool isAuthenticated = true;
     private AdoptionFormModel adoptionForm = new AdoptionFormModel();
     private string dogName;
 
@@ -40,7 +42,7 @@ else
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
-        isAuthenticated = user.Identity?.IsAuthenticated ?? false;
+     //   isAuthenticated = user.Identity?.IsAuthenticated ?? false;
 
         // Fetch the dog's name based on the dogId (replace this with an actual API call)
         dogName = $"Dog {dogId}";
