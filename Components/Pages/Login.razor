@@ -1,10 +1,12 @@
 @layout LoginLayout
 @using PawfectMatch.Components.Layout
 @using PawfectMatch.Components.Pages.Models
-@using PawfectMatch.Data
 @using Microsoft.EntityFrameworkCore
-@inject PawfectMatchContext DbContext
+@using System.Net.Http.Json
+@inject HttpClient Http
 @inject NavigationManager Navigation
+@inject AuthenticationService AuthenticationService
+
 @page "/Login"
 @rendermode InteractiveServer
 
@@ -43,27 +45,31 @@
     // Login method
     private async Task LoginUser()
     {
-        // Retrieve the user from the database based on the username
-        var user = await DbContext.Users.FirstOrDefaultAsync(u => u.username == Username);
+        // Prepare the login request
+        var loginModel = new { Username, Password };
 
-        if (user != null)
+        try
         {
-            if (user.password == Password)
-            {
-              
+            // Send the login request to the backend API to authenticate the user
+            var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
 
-                // Redirect the user to the home page or wherever appropriate
+            if (response.IsSuccessStatusCode)
+            {
+                var token = await response.Content.ReadAsStringAsync();
+                await AuthenticationService.StoreToken(token);
                 Navigation.NavigateTo("/");
             }
             else
             {
-                LoginMessage = "Invalid username or password.";
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                LoginMessage = $"Error: {response.StatusCode} - {errorMessage}";
             }
+
         }
-        else
+        catch (Exception ex)
         {
-            // User not found
-            LoginMessage = "Invalid username or password.";
+            // Handle any errors that may occur during the API request
+            LoginMessage = "An error occurred during login: " + ex.Message;
         }
     }
 }

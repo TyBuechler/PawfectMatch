@@ -1,38 +1,54 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Components.Services;
-using PawfectMatch.Components;
 using PawfectMatch.Data;
+using System.Net.Http;
+using PawfectMatch.Components;
+using Blazored.LocalStorage;
+using PawfectMatch.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Authentication and Authorization services
+// Register HttpClient with your base address (pointing to the UserAuthentication API)
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("https://localhost:7142/") // Change this to the correct API URL
+});
+
+// Set up authentication using cookies (this is for a fallback in case you want Cookie-based login flow)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/login"; // Optional: Change this to your login page URL
+        options.Cookie.Name = "auth_token"; // Custom cookie name
+        options.LoginPath = "/Login"; // Redirect path for login
+        options.Cookie.MaxAge = TimeSpan.FromMinutes(30); // Cookie expiry
+        options.AccessDeniedPath = "/access-denied"; // Redirect path for access denial
     });
 
+// Set up authorization
 builder.Services.AddAuthorization();
 
-
-// Register the DbContextFactory
+// Register the DbContextFactory with the connection string for PawfectMatch
 builder.Services.AddDbContextFactory<PawfectMatchContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PawfectMatchContext")
     ?? throw new InvalidOperationException("Connection string 'PawfectMatchContext' not found.")));
 
-
-
-// Add other services
+// Add additional services
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddBlazoredLocalStorage();
 
-// Register DogService
+// Register custom services like DogService and MessagingBrokerClient
 builder.Services.AddScoped<DogService>();
 builder.Services.AddScoped<IMessagingBrokerClient, MessagingBrokerClient>();
+
+// Register custom AuthenticationService
+builder.Services.AddScoped<AuthenticationService>();
+
+// Add HttpClient and Razor Components
 builder.Services.AddHttpClient();
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents(); // Razor components for Blazor Server
 
 var app = builder.Build();
 
@@ -49,10 +65,11 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 // Use Authentication and Authorization middleware
-app.UseAuthentication();  // Add this line
-app.UseAuthorization();   // Add this line
+app.UseAuthentication();  // Ensures the Authentication middleware is invoked
+app.UseAuthorization();   // Ensures Authorization middleware is invoked
 
+// Map Razor Components
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode(); // Only needed for Blazor Server
 
 app.Run();
