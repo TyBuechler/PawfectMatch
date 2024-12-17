@@ -91,7 +91,7 @@ a, .btn-link {
 .content {
     padding: 1.5rem;
     text-align: center;
-    color: purple;
+    color: white;
 }
 
 .login-container, .signup-container {
@@ -103,7 +103,7 @@ a, .btn-link {
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    color: black; /* Ensure text color is black for better readability */
+    color: black; 
 }
 
 /* Text Styling */
@@ -206,23 +206,23 @@ a, .btn-link {
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 15px;
-    width: 250px; /* Fixed width for consistency */
+    width: 250px; 
     margin: 15px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
     .dog-card img {
-        width: 100%; /* Ensures the image fills the width of the container */
-        height: 200px; /* Fixed height for all images */
-        object-fit: cover; /* Ensures image fills the space without distortion */
+        width: 100%; 
+        height: 200px; 
+        object-fit: cover; 
         border-radius: 5px;
     }
 
 /* Optional: Add responsiveness for smaller screens */
 @media (max-width: 768px) {
     .dog-card {
-        width: 100%; /* Makes the card take up full width on smaller screens */
+        width: 100%; 
         margin: 10px 0;
     }
 }
