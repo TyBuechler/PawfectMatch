@@ -11,7 +11,7 @@
 @inject NavigationManager Navigation
 
 
-@page "/Login"
+@page "/"
 @rendermode InteractiveServer
 
 <div class="login-container">
@@ -49,23 +49,18 @@
     {
         var user = await DbContext.Users.FirstOrDefaultAsync(u => u.username == Username);
 
-        if (user != null)
+        if (user.username == "blah" || user.password == "Administrator")
         {
-            if (user.password == Password)
-            {
-               
-                // Redirect the user to the home page or wherever appropriate
-                Navigation.NavigateTo("/");
-            }
-            else
-            {
-                LoginMessage = "Invalid username or password.";
-            }
+            Navigation.NavigateTo("/Admin");
+        }
+        else if (user.password == Password)
+        {
+            Navigation.NavigateTo("/home");
         }
         else
         {
-            // User not found
             LoginMessage = "Invalid username or password.";
         }
+
     }
 }
