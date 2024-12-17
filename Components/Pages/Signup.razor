@@ -30,6 +30,7 @@
     </p>
 </div>
 
+
 @code {
     private string NewUsername = string.Empty;
     private string NewPassword = string.Empty;
@@ -69,7 +70,8 @@
 
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync();
-    
+
 
     }
 }
+
