@@ -12,7 +12,7 @@
 
 <h1>Dogs Available for Adoption</h1>
 
-<!-- Dropdown for Breed Filter -->
+<!-- Filters Section -->
 <div>
     <label for="breedFilter">Filter by Breed:</label>
     <select id="breedFilter" @onchange="FilterDogs">
@@ -21,6 +21,21 @@
         {
             <option value="@breed">@breed</option>
         }
+    </select>
+</div>
+
+<div>
+    <label for="nameFilter">Search by Name:</label>
+    <input id="nameFilter" type="text" @bind="searchName" @oninput="FilterDogs" placeholder="Enter dog name" />
+</div>
+
+<div>
+    <label for="sizeFilter">Filter by Size:</label>
+    <select id="sizeFilter" @onchange="FilterDogs">
+        <option value="">All Sizes</option>
+        <option value="Small">Small (1-20 lbs)</option>
+        <option value="Medium">Medium (21-50 lbs)</option>
+        <option value="Large">Large (51+ lbs)</option>
     </select>
 </div>
 
@@ -45,6 +60,8 @@
     private List<Dog> filteredDogs = new();
     private List<string> breeds = new();
     private string selectedBreed = "";
+    private string searchName = "";
+    private string selectedSize = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,22 +79,56 @@
 
     private async Task LoadFilteredDogsAsync()
     {
-        IQueryable<Dog> query = DbContext.Dog.AsNoTracking();
+        IQueryable<Dog> query = DbContext.Dog.AsNoTracking().Where(d => d.IsAvailable);
 
         if (!string.IsNullOrEmpty(selectedBreed))
         {
             query = query.Where(d => d.Breed == selectedBreed);
         }
 
-        filteredDogs = await query
-            .Where(d => d.IsAvailable)
-            .ToListAsync();
+        if (!string.IsNullOrEmpty(searchName))
+        {
+            query = query.Where(d => d.Name.Contains(searchName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrEmpty(selectedSize))
+        {
+            query = query.Where(d => GetSizeCategory(d.Size) == selectedSize);
+        }
+
+        filteredDogs = await query.ToListAsync();
     }
 
     private async Task FilterDogs(ChangeEventArgs e)
     {
-        selectedBreed = e.Value?.ToString();
+        // Determine which filter triggered the event
+        var selectedValue = e.Value?.ToString();
+
+        if (e.Value != null)
+        {
+            if (selectedValue == selectedBreed)
+            {
+                selectedBreed = selectedValue;
+            }
+            else if (selectedValue == searchName)
+            {
+                searchName = selectedValue;
+            }
+            else if (selectedValue == selectedSize)
+            {
+                selectedSize = selectedValue;
+            }
+        }
+
+        // Apply the new filters
         await LoadFilteredDogsAsync();
+    }
+
+    private string GetSizeCategory(int size)
+    {
+        if (size <= 20) return "Small";
+        if (size <= 50) return "Medium";
+        return "Large";
     }
 
     private void NavigateToDetails(int id)
