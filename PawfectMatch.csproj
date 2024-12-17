@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Components\Services\AuthenticationService.cs" />
-    <Compile Remove="Components\Services\CustomAuthenticationStateProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
