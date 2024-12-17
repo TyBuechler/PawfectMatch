@@ -12,14 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login";
-        options.LogoutPath = "/Logout";
+        options.LoginPath = "/login"; // Optional: Change this to your login page URL
     });
 
 builder.Services.AddAuthorization(); // Add authorization
 
-// Add HttpContextAccessor
-builder.Services.AddHttpContextAccessor();
 
 // Register the DbContextFactory
 builder.Services.AddDbContextFactory<PawfectMatchContext>(options =>
@@ -35,10 +32,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<DogService>();
 builder.Services.AddScoped<IMessagingBrokerClient, MessagingBrokerClient>();
-
-// Ensure cascading authentication state is added for Blazor components
-builder.Services.AddCascadingAuthenticationState(); // This ensures AuthenticationStateProvider is available
-
+builder.Services.AddHttpClient();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
