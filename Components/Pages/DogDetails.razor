@@ -6,22 +6,37 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-@if (selectedDog == null)
-{
-    <p>Loading dog details...</p>
-}
-else
-{
-    <h1>@selectedDog.Name's Details</h1>
-    <img src="@selectedDog.ImageUrl" alt="@selectedDog.Name" style="width:200px;height:200px;" />
-    <p>Name: @selectedDog.Name</p>
-    <p>Breed: @selectedDog.Breed</p>
-    <p>Age: @selectedDog.Age</p>
-    <p>Size in pounds: @selectedDog.Size</p>
-    <p>Medical Report: @selectedDog.MedRecords</p>
-    <p>Previous history of @selectedDog.Name: @selectedDog.PrevHistory</p>
-    <button @onclick="NavigateToSearch" style="margin-top:20px;">Back to search</button>
-}
+<div class="container mt-5">
+    @if (selectedDog == null)
+    {
+        <p>Loading dog details...</p>
+    }
+    else
+    {
+        <div class="text-center">
+            <h1 class="display-4 text-primary">@selectedDog.Name's Details</h1>
+            <img src="@selectedDog.ImageUrl" alt="@selectedDog.Name" class="img-fluid rounded-circle" style="max-width: 200px; height: auto;" />
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <p><strong>Name:</strong> @selectedDog.Name</p>
+                <p><strong>Breed:</strong> @selectedDog.Breed</p>
+                <p><strong>Age:</strong> @selectedDog.Age</p>
+                <p><strong>Size:</strong> @selectedDog.Size lbs</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Medical Report:</strong> @selectedDog.MedRecords</p>
+                <p><strong>Previous History:</strong> @selectedDog.PrevHistory</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button @onclick="NavigateToAdoptionForm" class="btn btn-primary btn-lg mx-2">Adopt Me</button>
+            <button @onclick="NavigateToSearch" class="btn btn-secondary btn-lg mx-2">Back to Search</button>
+        </div>
+    }
+</div>
 
 @code {
     [Parameter]
@@ -47,5 +62,13 @@ else
     private void NavigateToSearch()
     {
         Navigation.NavigateTo("/dogsearch");
+    }
+
+    private void NavigateToAdoptionForm()
+    {
+        if (selectedDog != null)
+        {
+            Navigation.NavigateTo($"/adopt/{selectedDog.Id}");
+        }
     }
 }
