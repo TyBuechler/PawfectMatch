@@ -1,69 +1,142 @@
 ﻿@page "/adopt/{dogId:int}"
-
-@using Microsoft.AspNetCore.Components.Authorization
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject HttpClient Http
+@using PawfectMatch.Components.Pages.Models
+@using PawfectMatch.Components.Services
+@using PawfectMatch.Components.Layout
+@using PawfectMatch.Data
+@using Microsoft.EntityFrameworkCore
+@inject NavigationManager Navigation
+@inject PawfectMatchContext DbContext
+@rendermode InteractiveServer
 
 <h3>Adopt @dogName</h3>
 
-@if (!isAuthenticated)
+<EditForm Model="@adoptionForm" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="fullName">Full Name:</label>
+        <InputText id="fullName" class="form-control" @bind-Value="adoptionForm.FullName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <InputText id="email" class="form-control" @bind-Value="adoptionForm.Email" required />
+    </div>
+
+    <div class="form-group">
+        <label for="phone">Phone:</label>
+        <InputText id="phone" class="form-control" @bind-Value="adoptionForm.Phone" required />
+    </div>
+
+    <div class="form-group">
+        <label for="address">Address:</label>
+        <InputText id="address" class="form-control" @bind-Value="adoptionForm.Address" />
+    </div>
+
+    <div class="form-group">
+        <label for="preferences">Dog Preferences:</label>
+        <InputText id="preferences" class="form-control" @bind-Value="adoptionForm.Preferences" />
+    </div>
+
+    <div class="form-group">
+        <label>Have you had pets before?</label>
+        <select class="form-control" @bind="adoptionForm.HasPetsBefore">
+            <option value="">Select</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Do you agree to a home check?</label>
+        <InputCheckbox @bind-Value="adoptionForm.HomeCheck" />
+    </div>
+
+    <div class="form-group">
+        <label for="message">Message:</label>
+        <InputTextArea id="message" class="form-control" @bind-Value="adoptionForm.Message" />
+    </div>
+
+    <div class="form-group">
+        <label for="additionalComments">Additional Comments (Optional):</label>
+        <InputTextArea id="additionalComments" class="form-control" @bind-Value="adoptionForm.AdditionalComments" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Adoption Request</button>
+</EditForm>
+
+@if (isSubmitted)
 {
-    <p>You must be logged in to submit an adoption request.</p>
-}
-else
-{
-    <EditForm Model="@adoptionForm" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <InputText id="email" class="form-control" @bind-Value="adoptionForm.Email" required />
-        </div>
-
-        <div class="form-group">
-            <label for="message">Message:</label>
-            <InputTextArea id="message" class="form-control" @bind-Value="adoptionForm.Message" />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit Adoption Request</button>
-    </EditForm>
+    <div class="alert alert-success">
+        Your adoption request for <strong>@dogName</strong> has been submitted successfully!
+    </div>
 }
 
 @code {
     [Parameter] public int dogId { get; set; }
-    private bool isAuthenticated;
     private AdoptionFormModel adoptionForm = new AdoptionFormModel();
     private string dogName;
+    private bool isSubmitted = false;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        isAuthenticated = user.Identity?.IsAuthenticated ?? false;
-
-        // Fetch the dog's name based on the dogId (replace this with an actual API call)
-        dogName = $"Dog {dogId}";
+        // Fetch dog's name based on DogId
+        var dog = await DbContext.Dog.FirstOrDefaultAsync(d => d.Id == dogId);
+        if (dog != null)
+        {
+            dogName = dog.Name;
+        }
+        else
+        {
+            dogName = "Unknown Dog";
+        }
     }
 
     private async Task HandleValidSubmit()
     {
-        // Send the form data to the server
-        var response = await Http.PostAsJsonAsync("api/adopt", adoptionForm);
+        try
+        {
+            // Map to the Adoption entity
+            var adoptionRequest = new Adoption
+                {
+                    Email = adoptionForm.Email,
+                    DogName = dogName,
+                    DogId = dogId,
+                    SubmissionDate = DateTime.UtcNow,
+                    AdditionalComments = adoptionForm.AdditionalComments,
+                    FullName = adoptionForm.FullName,
+                    Phone = adoptionForm.Phone,
+                    Address = adoptionForm.Address,
+                    Preferences = adoptionForm.Preferences,
+                    HasPetsBefore = adoptionForm.HasPetsBefore,
+                    HomeCheck = adoptionForm.HomeCheck,
+                    Message = adoptionForm.Message
+                };
 
-        if (response.IsSuccessStatusCode)
-        {
-            // Handle success (maybe show a confirmation message)
+            // Save to database
+            DbContext.Adoption.Add(adoptionRequest);
+            await DbContext.SaveChangesAsync();
+
+            isSubmitted = true;
         }
-        else
+        catch (Exception ex)
         {
-            // Handle failure (maybe show an error message)
+            Console.WriteLine($"Error: {ex.Message}");
+            // Optionally handle error feedback
         }
     }
 
     public class AdoptionFormModel
     {
+        public string FullName { get; set; }
         public string Email { get; set; }
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public string Preferences { get; set; }
+        public string HasPetsBefore { get; set; }
+        public bool HomeCheck { get; set; }
         public string Message { get; set; }
+        public string AdditionalComments { get; set; }
     }
 }

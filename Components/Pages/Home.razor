@@ -1,64 +1,74 @@
-﻿@page "/"
+﻿@page "/home"
 
 @using Microsoft.AspNetCore.Components.Authorization
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="home-container">
     <div class="hero-section">
-        <h1>Welcome to Pawfect Match!</h1>
+        <h1 style="color: rebeccapurple">Welcome to Pawfect Match!</h1>
         <p>Find your new best friend today.</p>
-        <a href="/adopt" class="btn btn-primary">Adopt a Dog</a>
         <a href="/about-us" class="btn btn-secondary">Learn More</a>
     </div>
 
     <div class="content-section">
-        @if (isAuthenticated)
-        {
-            <p class="welcome-message">Welcome back! Explore our adoptable dogs and see who needs a loving home.</p>
-            <a href="/profile" class="btn btn-outline-primary">View Your Profile</a>
-        }
-        else
-        {
-            <p class="login-prompt">
-                <strong>Not a member?</strong> <a href="/signup">Sign up</a> now to access personalized features and track your adoptions.
-            </p>
-            <p class="login-prompt">
-                Already have an account? <a href="/login">Log in here</a>.
-            </p>
-        }
+        <p class="welcome-message">Welcome back! Explore our adoptable dogs and see who needs a loving home.</p>
     </div>
 
     <div class="adoptable-dogs-section">
         <h2>Meet Our Dogs</h2>
         <p>These adorable pups are waiting to meet you:</p>
         <div class="dog-cards">
-            <!-- Example dog cards (to be populated dynamically) -->
-            <div class="dog-card">
-                <img src="images/dog1.jpg" alt="Dog 1" />
-                <h3>Buddy</h3>
-                <p>Age: 3 years | Breed: Labrador</p>
-                <a href="/details/buddy" class="btn btn-primary">Adopt Me</a>
-            </div>
-            <div class="dog-card">
-                <img src="images/dog2.jpg" alt="Dog 2" />
-                <h3>Daisy</h3>
-                <p>Age: 2 years | Breed: Beagle</p>
-                <a href="/details/daisy" class="btn btn-primary">Adopt Me</a>
-            </div>
+            @if (Dogs != null && Dogs.Any())
+            {
+                foreach (var dog in Dogs)
+                {
+                    <div class="dog-card">
+                        <img src="@dog.ImageUrl" alt="@dog.Name" />
+                        <h3>@dog.Name</h3>
+                        <p>Age: @dog.Age | Breed: @dog.Breed</p>
+                        <a href="/adopt/@dog.Id" class="btn btn-primary">Adopt Me</a>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>Loading adoptable dogs...</p>
+            }
         </div>
     </div>
 </div>
 
-
-
 @code {
     private bool isAuthenticated;
+    private List<Dog> Dogs;
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         isAuthenticated = user.Identity?.IsAuthenticated ?? false;
-        StateHasChanged();
+
+        // Simulate fetching dog data (replace with actual API call)
+        Dogs = await FetchDogsAsync();
+    }
+
+    private Task<List<Dog>> FetchDogsAsync()
+    {
+        // Replace this with a real API call to fetch dog data
+        return Task.FromResult(new List<Dog>
+        {
+            new Dog { Id = 1, Name = "Buddy", Age = "3 years", Breed = "Golden Retriever", ImageUrl = "images/dog1.jpg" },
+            new Dog { Id = 2, Name = "Daisy", Age = "2 years", Breed = "Boxer", ImageUrl = "images/dog2.jpg" },
+            new Dog { Id = 3, Name = "Charlie", Age = "1 year", Breed = "Beagle", ImageUrl = "images/beagle1.jpeg" } // Added 3rd dog
+        });
+    }
+
+    private class Dog
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Age { get; set; }
+        public string Breed { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

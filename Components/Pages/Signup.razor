@@ -26,9 +26,10 @@
     <p class="signup-message">@SignUpMessage</p>
 
     <p class="login-link">
-        Already have an account? <a href="/Login">Login</a>
+        Already have an account? <a href="/">Login</a>
     </p>
 </div>
+
 
 @code {
     private string NewUsername = string.Empty;
@@ -69,7 +70,8 @@
 
         dbContext.Users.Add(user);
         await dbContext.SaveChangesAsync();
-    
+
 
     }
 }
+
