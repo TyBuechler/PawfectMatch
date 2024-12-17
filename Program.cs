@@ -2,20 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using PawfectMatch.Components.Services;
 using PawfectMatch.Data;
-using System.Net.Http;
-using PawfectMatch.Components;
 using Blazored.LocalStorage;
-using PawfectMatch.Services;
+using PawfectMatch.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Register HttpClient with your base address (pointing to the UserAuthentication API)
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:7142/") // Change this to the correct API URL
+    BaseAddress = new Uri("https://localhost:7142/") // Replace with the correct API base URL
 });
 
-// Set up authentication using cookies (this is for a fallback in case you want Cookie-based login flow)
+// Set up cookie-based authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -25,39 +23,42 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/access-denied"; // Redirect path for access denial
     });
 
-// Set up authorization
+// Add authorization policies
 builder.Services.AddAuthorization();
 
-// Register the DbContextFactory with the connection string for PawfectMatch
+// Register the DbContextFactory for PawfectMatch with the connection string
 builder.Services.AddDbContextFactory<PawfectMatchContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PawfectMatchContext")
     ?? throw new InvalidOperationException("Connection string 'PawfectMatchContext' not found.")));
 
-// Add additional services
+// Add support for Entity Framework-specific features in Razor QuickGrid
 builder.Services.AddQuickGridEntityFrameworkAdapter();
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// Add Blazored.LocalStorage for storing data in the browser
 builder.Services.AddBlazoredLocalStorage();
 
 // Register custom services like DogService and MessagingBrokerClient
 builder.Services.AddScoped<DogService>();
-builder.Services.AddScoped<IMessagingBrokerClient, MessagingBrokerClient>();
+builder.Services.AddScoped<IMessagingBrokerClient, MessagingBrokerClient>(); // Ensure MessagingBrokerClient is implemented
 
-// Register custom AuthenticationService
-builder.Services.AddScoped<AuthenticationService>();
-
-// Add HttpClient and Razor Components
-builder.Services.AddHttpClient();
+// Add Razor Components with interactive server rendering
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents(); // Razor components for Blazor Server
+    .AddInteractiveServerComponents(); // Required for Blazor Server interactivity
+
+// Add developer exception page for database errors (Development only)
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    app.UseHsts();
-    app.UseMigrationsEndPoint();
+    app.UseExceptionHandler("/Error");
+    app.UseHsts(); // Enforce strict transport security
+}
+else
+{
+    app.UseMigrationsEndPoint(); // Enable database migrations endpoint in development
 }
 
 app.UseHttpsRedirection();
@@ -65,11 +66,11 @@ app.UseStaticFiles();
 app.UseAntiforgery();
 
 // Use Authentication and Authorization middleware
-app.UseAuthentication();  // Ensures the Authentication middleware is invoked
-app.UseAuthorization();   // Ensures Authorization middleware is invoked
+app.UseAuthentication(); // Ensures authentication middleware is invoked
+app.UseAuthorization();  // Ensures authorization middleware is invoked
 
-// Map Razor Components
+// Map Razor Components for the Blazor application
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode(); // Only needed for Blazor Server
+    .AddInteractiveServerRenderMode(); // Enable interactive server rendering for Blazor Server
 
 app.Run();

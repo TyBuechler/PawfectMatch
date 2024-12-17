@@ -1,4 +1,4 @@
-﻿public class AuthenticatedHttpClientHandler : DelegatingHandler
+﻿/*public class AuthenticatedHttpClientHandler : DelegatingHandler
 {
     private readonly AuthenticationService _authService;
 
@@ -19,3 +19,4 @@
         return await base.SendAsync(request, cancellationToken);
     }
 }
+*/

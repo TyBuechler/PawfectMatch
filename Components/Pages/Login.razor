@@ -1,23 +1,21 @@
 @layout LoginLayout
+@using PawfectMatch;
 @using PawfectMatch.Components.Layout
 @using PawfectMatch.Components.Pages.Models
+@using PawfectMatch.Data
+@using System.Security.Claims;
 @using Microsoft.EntityFrameworkCore
-@using System.Net.Http.Json
-@inject HttpClient Http
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@inject PawfectMatchContext DbContext
 @inject NavigationManager Navigation
-@inject AuthenticationService AuthenticationService
+
 
 @page "/Login"
 @rendermode InteractiveServer
 
 <div class="login-container">
     <h3 class="login-text">Login</h3>
-
-    @if (!string.IsNullOrEmpty(LoginMessage))
-    {
-        <div class="alert">@LoginMessage</div>
-    }
-
     <form class="login-form">
         <div class="form-group">
             <label for="username">Username:</label>
@@ -32,44 +30,42 @@
         <button type="button" @onclick="LoginUser" class="btn btn-primary">Login</button>
     </form>
 
+    @if (!string.IsNullOrEmpty(LoginMessage))
+    {
+        <p class="error-message">@LoginMessage</p>
+    }
+
     <p class="signup-text-sub">
-        Don't have an account? <a href="/signup">Sign up here</a>.<br />
+        Don't have an account? <a href="/signup">Sign up here</a>.
     </p>
 </div>
 
 @code {
-    private string Username = string.Empty;
-    private string Password = string.Empty;
-    private string LoginMessage = string.Empty;
+    private string Username { get; set; } = string.Empty;
+    private string Password { get; set; } = string.Empty;
+    private string LoginMessage { get; set; } = string.Empty;
 
-    // Login method
     private async Task LoginUser()
     {
-        // Prepare the login request
-        var loginModel = new { Username, Password };
+        var user = await DbContext.Users.FirstOrDefaultAsync(u => u.username == Username);
 
-        try
+        if (user != null)
         {
-            // Send the login request to the backend API to authenticate the user
-            var response = await Http.PostAsJsonAsync("api/auth/login", loginModel);
-
-            if (response.IsSuccessStatusCode)
+            if (user.password == Password)
             {
-                var token = await response.Content.ReadAsStringAsync();
-                await AuthenticationService.StoreToken(token);
+               
+                // Redirect the user to the home page or wherever appropriate
                 Navigation.NavigateTo("/");
             }
             else
             {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                LoginMessage = $"Error: {response.StatusCode} - {errorMessage}";
+                LoginMessage = "Invalid username or password.";
             }
-
         }
-        catch (Exception ex)
+        else
         {
-            // Handle any errors that may occur during the API request
-            LoginMessage = "An error occurred during login: " + ex.Message;
+            // User not found
+            LoginMessage = "Invalid username or password.";
         }
     }
 }

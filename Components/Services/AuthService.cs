@@ -1,4 +1,4 @@
-﻿using Microsoft.JSInterop;
+﻿/*using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
 public class AuthenticationService
@@ -36,3 +36,4 @@ public class AuthenticationService
         return !string.IsNullOrEmpty(token);
     }
 }
+*/
